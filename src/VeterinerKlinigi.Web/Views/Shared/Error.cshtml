@@ -1,0 +1,32 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "Hata";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card pv-card text-center">
+                <div class="card-body p-5">
+                    <div class="pv-icon pv-icon-peach mx-auto mb-3"><i class="bi bi-emoji-frown"></i></div>
+                    <h1 class="h3 mb-3">Bir hata oluştu</h1>
+                    <p class="text-body-secondary mb-4">
+                        İsteğiniz işlenirken beklenmeyen bir sorun oluştu. Lütfen biraz sonra tekrar deneyin.
+                    </p>
+
+                    @* Teknik detay (stack trace) kullanıcıya GÖSTERİLMEZ; sadece destek için takip numarası verilir. *@
+                    @if (Model.ShowRequestId)
+                    {
+                        <p class="small text-body-secondary">
+                            Takip numarası: <code>@Model.RequestId</code>
+                        </p>
+                    }
+
+                    <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-primary rounded-pill px-4">
+                        <i class="bi bi-house-heart me-2"></i>Ana sayfaya dön
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

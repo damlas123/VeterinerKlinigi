@@ -1,0 +1,249 @@
+/* =====================================================================
+   PatiVet — Ortak tema
+   Renk paleti: beyaz, açık yeşil ve pastel tonlar.
+   Bootstrap 5'in CSS değişkenlerini (--bs-*) ezerek, Bootstrap bileşenlerinin
+   (buton, link, badge...) otomatik olarak bizim renklerimizi kullanmasını sağlarız.
+   ===================================================================== */
+
+:root {
+    /* --- Marka renkleri --- */
+    --pv-primary: #2e9e6b;
+    --pv-primary-rgb: 46, 158, 107;
+    --pv-primary-dark: #217a52;
+    --pv-primary-soft: #e8f5ee;
+
+    /* --- Pastel yardımcı renkler (ikon kutuları, kartlar) --- */
+    --pv-mint: #dff3ea;
+    --pv-peach: #fff1e6;
+    --pv-peach-text: #c2671f;
+    --pv-sky: #e7f3fb;
+    --pv-sky-text: #2b78a8;
+    --pv-lavender: #f1ecfb;
+    --pv-lavender-text: #6f4fb5;
+
+    /* --- Genel --- */
+    --pv-bg: #f7fbf8;
+    --pv-text: #23423a;
+    --pv-border: #e3efe8;
+    --pv-radius: 1rem;
+    --pv-shadow: 0 0.5rem 1.5rem rgba(35, 66, 58, 0.06);
+
+    /* --- Bootstrap değişkenlerini marka rengine bağla --- */
+    --bs-primary: var(--pv-primary);
+    --bs-primary-rgb: var(--pv-primary-rgb);
+    --bs-link-color: var(--pv-primary);
+    --bs-link-color-rgb: var(--pv-primary-rgb);
+    --bs-link-hover-color: var(--pv-primary-dark);
+    --bs-link-hover-color-rgb: 33, 122, 82;
+    --bs-body-color: var(--pv-text);
+    --bs-body-bg: var(--pv-bg);
+    --bs-border-radius: 0.75rem;
+    --bs-border-radius-lg: var(--pv-radius);
+    --bs-focus-ring-color: rgba(var(--pv-primary-rgb), 0.25);
+}
+
+html {
+    font-size: 15px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+body {
+    background-color: var(--pv-bg);
+    color: var(--pv-text);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--pv-text);
+}
+
+/* ---------------------------------------------------------------------
+   Butonlar: Bootstrap 5.3 her buton sınıfı için kendi değişkenlerini kullanır
+   --------------------------------------------------------------------- */
+.btn-primary {
+    --bs-btn-bg: var(--pv-primary);
+    --bs-btn-border-color: var(--pv-primary);
+    --bs-btn-hover-bg: var(--pv-primary-dark);
+    --bs-btn-hover-border-color: var(--pv-primary-dark);
+    --bs-btn-active-bg: var(--pv-primary-dark);
+    --bs-btn-active-border-color: var(--pv-primary-dark);
+    --bs-btn-disabled-bg: var(--pv-primary);
+    --bs-btn-disabled-border-color: var(--pv-primary);
+    --bs-btn-focus-shadow-rgb: var(--pv-primary-rgb);
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--pv-primary);
+    --bs-btn-border-color: var(--pv-primary);
+    --bs-btn-hover-bg: var(--pv-primary);
+    --bs-btn-hover-border-color: var(--pv-primary);
+    --bs-btn-active-bg: var(--pv-primary-dark);
+    --bs-btn-active-border-color: var(--pv-primary-dark);
+    --bs-btn-focus-shadow-rgb: var(--pv-primary-rgb);
+}
+
+/* Klavye ile gezinirken odak halkası marka renginde görünsün (erişilebilirlik) */
+.btn:focus-visible,
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+    border-color: rgba(var(--pv-primary-rgb), 0.6);
+    box-shadow: 0 0 0 0.25rem rgba(var(--pv-primary-rgb), 0.2);
+}
+
+.form-check-input:checked {
+    background-color: var(--pv-primary);
+    border-color: var(--pv-primary);
+}
+
+/* ---------------------------------------------------------------------
+   Üst menü (navbar) ve alt bilgi (footer)
+   --------------------------------------------------------------------- */
+.pv-navbar {
+    background-color: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--pv-border);
+}
+
+.pv-navbar .navbar-brand {
+    font-weight: 700;
+    font-size: 1.35rem;
+    color: var(--pv-text);
+}
+
+.pv-navbar .nav-link {
+    color: var(--pv-text);
+    font-weight: 500;
+    border-radius: 0.6rem;
+    padding-inline: 0.85rem !important;
+}
+
+.pv-navbar .nav-link:hover,
+.pv-navbar .nav-link.active {
+    color: var(--pv-primary);
+    background-color: var(--pv-primary-soft);
+}
+
+.pv-footer {
+    background-color: #ffffff;
+    border-top: 1px solid var(--pv-border);
+}
+
+/* ---------------------------------------------------------------------
+   Kartlar ve ikon kutuları — tüm panellerde aynı tasarım dili
+   --------------------------------------------------------------------- */
+.pv-card {
+    border: 1px solid var(--pv-border);
+    border-radius: var(--pv-radius);
+    box-shadow: var(--pv-shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pv-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.75rem 2rem rgba(35, 66, 58, 0.1);
+}
+
+.pv-icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+}
+
+.pv-icon-green { background-color: var(--pv-mint); color: var(--pv-primary-dark); }
+.pv-icon-peach { background-color: var(--pv-peach); color: var(--pv-peach-text); }
+.pv-icon-sky { background-color: var(--pv-sky); color: var(--pv-sky-text); }
+.pv-icon-lavender { background-color: var(--pv-lavender); color: var(--pv-lavender-text); }
+
+.pv-badge {
+    background-color: var(--pv-primary-soft);
+    color: var(--pv-primary-dark);
+    font-weight: 500;
+    padding: 0.5rem 0.9rem;
+}
+
+.pv-soft-section {
+    background-color: var(--pv-primary-soft);
+}
+
+/* ---------------------------------------------------------------------
+   Ana sayfa karşılama (hero) bölümü
+   --------------------------------------------------------------------- */
+.pv-hero {
+    padding: 4.5rem 0;
+    background:
+        radial-gradient(circle at 85% 20%, var(--pv-mint) 0, transparent 45%),
+        radial-gradient(circle at 10% 90%, var(--pv-peach) 0, transparent 40%),
+        #ffffff;
+    border-bottom: 1px solid var(--pv-border);
+}
+
+.pv-hero-visual {
+    position: relative;
+    width: min(100%, 360px);
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    background-color: var(--pv-primary-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pv-hero-logo {
+    width: 45%;
+    filter: drop-shadow(0 1rem 1.5rem rgba(46, 158, 107, 0.25));
+}
+
+.pv-float {
+    position: absolute;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 1rem;
+    background-color: #ffffff;
+    box-shadow: var(--pv-shadow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--pv-primary);
+    animation: pv-float 4s ease-in-out infinite;
+}
+
+.pv-float-1 { top: 8%; left: 6%; }
+.pv-float-2 { top: 14%; right: 4%; color: var(--pv-peach-text); animation-delay: 1s; }
+.pv-float-3 { bottom: 10%; left: 2%; color: var(--pv-lavender-text); animation-delay: 2s; }
+.pv-float-4 { bottom: 6%; right: 10%; color: var(--pv-sky-text); animation-delay: 3s; }
+
+@keyframes pv-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+/* Hareket hassasiyeti olan kullanıcılar için animasyonu kapat (erişilebilirlik) */
+@media (prefers-reduced-motion: reduce) {
+    .pv-float, .pv-card { animation: none; transition: none; }
+}
+
+/* "Nasıl çalışır?" adım numaraları */
+.pv-step {
+    width: 3.25rem;
+    height: 3.25rem;
+    margin: 0 auto;
+    border-radius: 50%;
+    background-color: #ffffff;
+    color: var(--pv-primary);
+    font-weight: 700;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--pv-shadow);
+}

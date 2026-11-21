@@ -1,0 +1,21 @@
+<!--
+  Directory.Build.props
+  Bu dosya, bulunduğu klasör ve alt klasörlerdeki TÜM .csproj dosyalarına
+  otomatik olarak eklenir. Ortak ayarları her projeye tek tek yazmamak için kullanılır.
+-->
+<Project>
+  <PropertyGroup>
+    <!-- Ödev şartı: .NET 10 (LTS) -->
+    <TargetFramework>net10.0</TargetFramework>
+
+    <!-- "using System;" gibi sık kullanılan using'leri otomatik ekler -->
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <!-- Null olabilecek referansları derleyici uyarısıyla yakalar (NullReferenceException'ı önler) -->
+    <Nullable>enable</Nullable>
+
+    <!-- Derlenen .dll dosyalarının "Özellikler > Ayrıntılar" bilgisinde görünür -->
+    <Company>PatiVet</Company>
+    <Product>Veteriner Kliniği Randevu ve Hasta Takip Sistemi</Product>
+  </PropertyGroup>
+</Project>

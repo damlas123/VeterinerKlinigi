@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="PatiVet - Veteriner kliniği randevu ve hasta takip sistemi" />
+    <title>@ViewData["Title"] | PatiVet</title>
+
+    <link rel="icon" type="image/svg+xml" href="~/img/pativet-logo.svg" />
+    <script type="importmap"></script>
+
+    @* Kütüphaneler wwwroot/lib altında; internet bağlantısı olmadan da çalışır *@
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <header>
+        <nav class="navbar navbar-expand-lg pv-navbar sticky-top">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center gap-2" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/img/pativet-logo.svg" alt="" width="36" height="36" />
+                    <span>Pati<span class="text-primary">Vet</span></span>
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#pvMainNav"
+                        aria-controls="pvMainNav" aria-expanded="false" aria-label="Menüyü aç/kapat">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="pvMainNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-house-heart me-1"></i>Ana Sayfa
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main role="main" class="flex-grow-1">
+        @RenderBody()
+    </main>
+
+    <footer class="pv-footer mt-5">
+        <div class="container py-4 d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+            <div class="d-flex align-items-center gap-2">
+                <img src="~/img/pativet-logo.svg" alt="" width="24" height="24" />
+                <span class="fw-semibold">PatiVet</span>
+                <span class="text-body-secondary small">Veteriner Kliniği Randevu ve Hasta Takip Sistemi</span>
+            </div>
+            <div class="text-body-secondary small">
+                &copy; @DateTime.Now.Year &middot; Sakarya Üniversitesi Web Programlama Projesi
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

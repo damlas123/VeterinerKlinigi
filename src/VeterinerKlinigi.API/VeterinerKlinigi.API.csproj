@@ -1,0 +1,17 @@
+<!--
+  VeterinerKlinigi.API
+  REST API controller'ları (/api/...). Bu bir Class Library'dir; kendi başına çalışmaz,
+  VeterinerKlinigi.Web uygulaması tarafından barındırılır (application part).
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <!-- ControllerBase, [ApiController], IActionResult gibi ASP.NET Core tiplerine erişim sağlar -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VeterinerKlinigi.Business\VeterinerKlinigi.Business.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Öğrenci Numarası** | _(öğrenci numaranız)_ |
+| **Öğrenci Numarası** | b241210351 |
 | **Adı Soyadı** | Damla Söylemez |
 | **Ders Grubu** | 1B |
 | **Ders** | Web Programlama — 2026-2027 Güz Dönemi |
@@ -35,6 +35,32 @@ PatiVet, ASP.NET Core MVC (.NET 10) ile geliştirilen bir **veteriner kliniği r
 | Yapay zekâ entegrasyonu | ModelContextProtocol.AspNetCore (resmî MCP C# SDK) |
 | Arayüz | Bootstrap 5, Bootstrap Icons, HTML5, CSS3, JavaScript, jQuery, Chart.js |
 
+## Proje yapısı
+
+Proje 5 katmandan oluşur. Oklar bağımlılık yönünü gösterir; iş kuralları sadece **Business** katmanında yazılır ve MVC, REST API ve MCP bu katmanı ortak kullanır.
+
+```text
+VeterinerKlinigi.Web ──► VeterinerKlinigi.API ──► VeterinerKlinigi.Business ──► VeterinerKlinigi.Data ──► VeterinerKlinigi.Entities
+ (MVC, Area'lar, MCP)      (REST controller'lar)     (servisler, DTO, kurallar)    (DbContext, migration)    (entity, enum)
+```
+
+Ayrıntılı mimari ve ER diyagramı: [docs/01-gereksinim-analizi-ve-mimari.md](docs/01-gereksinim-analizi-ve-mimari.md)
+
+## Kurulum (geliştirme ortamı)
+
+**Gereksinimler:** Visual Studio 2026 (ASP.NET and web development iş yükü) veya .NET 10 SDK, SQL Server LocalDB.
+
+```powershell
+git clone https://github.com/damlas123/VeterinerKlinigi.git
+cd VeterinerKlinigi
+dotnet restore
+dotnet run --project src/VeterinerKlinigi.Web --launch-profile https
+```
+
+Uygulama: <https://localhost:7080> · API durum ucu: <https://localhost:7080/api/system/status>
+
+> Veritabanı, migration ve örnek hesap bilgileri ilgili aşamalar tamamlandıkça bu bölüme eklenecektir.
+
 ## Roller
 
 | Rol | Özet |
@@ -48,12 +74,13 @@ PatiVet, ASP.NET Core MVC (.NET 10) ile geliştirilen bir **veteriner kliniği r
 | Doküman | İçerik |
 |---|---|
 | [Aşama 1 — Gereksinim analizi ve mimari](docs/01-gereksinim-analizi-ve-mimari.md) | Gereksinimler, yetki matrisi, **ER diyagramı**, iş kuralları, katmanlı mimari, API ve MCP tasarımı |
+| [Aşama 2 — Solution ve proje yapısı](docs/02-solution-ve-proje-yapisi.md) | 5 proje, referanslar, paket yönetimi, Program.cs, tema |
 | [10 günlük geliştirme planı](docs/gelistirme-plani.md) | Gün gün yapılacaklar ve commit mesajları |
 
 ## Geliştirme durumu
 
 - [x] **Gün 1 —** Gereksinim analizi, ER diyagramı ve mimari tasarım
-- [ ] **Gün 2 —** Solution ve katmanlı proje yapısı
+- [x] **Gün 2 —** Solution ve katmanlı proje yapısı
 - [ ] **Gün 3 —** Entity sınıfları, DbContext ve ilk migration
 - [ ] **Gün 4 —** Identity, roller ve hesap sayfaları
 - [ ] **Gün 5 —** Repository ve servis katmanı
@@ -63,4 +90,4 @@ PatiVet, ASP.NET Core MVC (.NET 10) ile geliştirilen bir **veteriner kliniği r
 - [ ] **Gün 9 —** MCP sunucusu
 - [ ] **Gün 10 —** Dashboard'lar, testler ve final rapor
 
-> Kurulum adımları, API örnekleri, MCP Inspector testi ve ekran görüntüleri proje ilerledikçe bu dosyaya eklenecektir.
+> API örnekleri, MCP Inspector testi ve ekran görüntüleri proje ilerledikçe bu dosyaya eklenecektir.

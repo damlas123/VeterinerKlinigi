@@ -1,0 +1,150 @@
+﻿@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+@* ===================== HERO (karşılama) BÖLÜMÜ ===================== *@
+<section class="pv-hero">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <span class="badge rounded-pill pv-badge mb-3">
+                    <i class="bi bi-heart-pulse me-1"></i>Dostlarınızın sağlığı bizim önceliğimiz
+                </span>
+                <h1 class="display-5 fw-bold mb-3">
+                    Veteriner randevunuzu <span class="text-primary">birkaç tıkla</span> alın
+                </h1>
+                <p class="lead text-body-secondary mb-4">
+                    PatiVet ile evcil hayvanlarınızın aşı takvimini takip edin, uzman hekimlerimizden
+                    size en uygun saatte randevu alın ve tüm muayene geçmişine tek yerden ulaşın.
+                </p>
+                <a href="#ozellikler" class="btn btn-primary btn-lg rounded-pill px-4">
+                    <i class="bi bi-arrow-down-circle me-2"></i>Neler sunuyoruz?
+                </a>
+            </div>
+            <div class="col-lg-6">
+                <div class="pv-hero-visual mx-auto">
+                    <img src="~/img/pativet-logo.svg" alt="PatiVet logosu" class="pv-hero-logo" />
+                    <span class="pv-float pv-float-1"><i class="bi bi-calendar2-check"></i></span>
+                    <span class="pv-float pv-float-2"><i class="bi bi-capsule"></i></span>
+                    <span class="pv-float pv-float-3"><i class="bi bi-clipboard2-pulse"></i></span>
+                    <span class="pv-float pv-float-4"><i class="bi bi-shield-check"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ===================== ÖZELLİKLER ===================== *@
+<section id="ozellikler" class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold">Neler sunuyoruz?</h2>
+        <p class="text-body-secondary">Hayvan sahipleri, veteriner hekimler ve klinik yönetimi için tek platform</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+            <div class="card pv-card h-100">
+                <div class="card-body">
+                    <div class="pv-icon pv-icon-green mb-3"><i class="bi bi-calendar2-check"></i></div>
+                    <h5 class="card-title">Online randevu</h5>
+                    <p class="card-text text-body-secondary">
+                        Hizmeti ve hekimi seçin, sadece gerçekten boş olan saatleri görün.
+                        Hizmet süresine göre çakışan randevular otomatik olarak engellenir.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card pv-card h-100">
+                <div class="card-body">
+                    <div class="pv-icon pv-icon-peach mb-3"><i class="bi bi-capsule"></i></div>
+                    <h5 class="card-title">Aşı takvimi</h5>
+                    <p class="card-text text-body-secondary">
+                        Yapılan aşılar ve bir sonraki doz tarihleri her evcil hayvan için ayrı ayrı tutulur;
+                        yaklaşan aşılar panelinizde görünür.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card pv-card h-100">
+                <div class="card-body">
+                    <div class="pv-icon pv-icon-sky mb-3"><i class="bi bi-hospital"></i></div>
+                    <h5 class="card-title">Uzman hekimler</h5>
+                    <p class="card-text text-body-secondary">
+                        Küçük hayvan, egzotik hayvan, cerrahi ve dermatoloji gibi uzmanlık alanlarına
+                        göre hekiminizi seçin.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card pv-card h-100">
+                <div class="card-body">
+                    <div class="pv-icon pv-icon-lavender mb-3"><i class="bi bi-clipboard2-pulse"></i></div>
+                    <h5 class="card-title">Muayene geçmişi</h5>
+                    <p class="card-text text-body-secondary">
+                        Her tamamlanan randevudan sonra hekimin girdiği tanı ve tedavi notları
+                        evcil hayvanınızın sağlık geçmişinde saklanır.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card pv-card h-100">
+                <div class="card-body">
+                    <div class="pv-icon pv-icon-green mb-3"><i class="bi bi-shield-check"></i></div>
+                    <h5 class="card-title">Güvenli hesap</h5>
+                    <p class="card-text text-body-secondary">
+                        Her kullanıcı yalnızca kendi verisini görür. Parolalar şifrelenmiş (hash) olarak
+                        saklanır, tüm formlar sahte isteklere karşı korunur.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card pv-card h-100">
+                <div class="card-body">
+                    <div class="pv-icon pv-icon-peach mb-3"><i class="bi bi-robot"></i></div>
+                    <h5 class="card-title">Yapay zekâ asistanı</h5>
+                    <p class="card-text text-body-secondary">
+                        MCP sunucusu sayesinde bir yapay zekâ asistanına
+                        <em>"Pamuk'un bir sonraki aşısı ne zaman?"</em> diye sorabilirsiniz.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ===================== NASIL ÇALIŞIR? ===================== *@
+<section class="pv-soft-section py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Nasıl çalışır?</h2>
+            <p class="text-body-secondary">Dört adımda randevunuz hazır</p>
+        </div>
+        <div class="row g-4 text-center">
+            <div class="col-6 col-lg-3">
+                <div class="pv-step">1</div>
+                <h6 class="mt-3 mb-1">Üye olun</h6>
+                <p class="small text-body-secondary mb-0">Ücretsiz hesabınızı oluşturun.</p>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="pv-step">2</div>
+                <h6 class="mt-3 mb-1">Dostunuzu ekleyin</h6>
+                <p class="small text-body-secondary mb-0">Tür, ırk, doğum tarihi ve kilosunu girin.</p>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="pv-step">3</div>
+                <h6 class="mt-3 mb-1">Hizmet ve saat seçin</h6>
+                <p class="small text-body-secondary mb-0">Sadece boş saatler listelenir.</p>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="pv-step">4</div>
+                <h6 class="mt-3 mb-1">Onayı takip edin</h6>
+                <p class="small text-body-secondary mb-0">Hekiminiz onayladığında panelinizde görün.</p>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,13 @@
+<!--
+  VeterinerKlinigi.Entities
+  Veritabanı tablolarına karşılık gelen sınıflar (entity), enum'lar ve sabitler.
+  En alttaki katmandır; başka hiçbir projeye referans vermez.
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <!-- ApplicationUser sınıfı IdentityUser'dan miras alacak (Aşama 3). IdentityUser bu pakette. -->
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" />
+  </ItemGroup>
+
+</Project>

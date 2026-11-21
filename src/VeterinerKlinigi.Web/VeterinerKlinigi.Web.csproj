@@ -1,0 +1,39 @@
+<!--
+  VeterinerKlinigi.Web
+  Çalıştırılan (startup) proje. MVC sayfalarını, Area'ları ve MCP araçlarını içerir;
+  API projesindeki controller'ları da barındırır. Tüm katmanlar Program.cs'te birbirine bağlanır.
+-->
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <!--
+      "dotnet user-secrets" ile saklanan gizli ayarların (JWT anahtarı vb.) kimliği.
+      Gizli değerler proje klasöründe değil, Windows kullanıcı profilinde tutulur:
+      %APPDATA%\Microsoft\UserSecrets\<bu-id>\secrets.json  → GitHub'a asla gitmez.
+    -->
+    <UserSecretsId>veterinerklinigi-web-105a32ea-3749-4375-8c28-8e6376241319</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VeterinerKlinigi.API\VeterinerKlinigi.API.csproj" />
+    <ProjectReference Include="..\VeterinerKlinigi.Business\VeterinerKlinigi.Business.csproj" />
+    <ProjectReference Include="..\VeterinerKlinigi.Data\VeterinerKlinigi.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      Migration komutlarının (dotnet ef / Add-Migration) çalışabilmesi için gerekli.
+      PrivateAssets=all: Bu paketler sadece geliştirme sırasında kullanılır, yayımlanan uygulamaya girmez.
+    -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <!-- Visual Studio Package Manager Console'daki Add-Migration / Update-Database komutları -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>

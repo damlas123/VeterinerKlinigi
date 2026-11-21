@@ -1,0 +1,13 @@
+<!--
+  VeterinerKlinigi.Business
+  İş katmanı: servisler, DTO'lar ve iş kuralları.
+  MVC, REST API ve MCP bu katmanı ORTAK kullanır; iş kuralları sadece burada yazılır.
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\VeterinerKlinigi.Data\VeterinerKlinigi.Data.csproj" />
+    <ProjectReference Include="..\VeterinerKlinigi.Entities\VeterinerKlinigi.Entities.csproj" />
+  </ItemGroup>
+
+</Project>
