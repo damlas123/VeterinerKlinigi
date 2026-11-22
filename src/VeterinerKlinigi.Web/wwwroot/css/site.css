@@ -44,6 +44,8 @@
 
 html {
     font-size: 15px;
+    /* Sayfa içi bağlantıya (#ozellikler gibi) gidildiğinde başlık, sabit menünün altında kalmasın */
+    scroll-padding-top: 5rem;
 }
 
 @media (min-width: 768px) {

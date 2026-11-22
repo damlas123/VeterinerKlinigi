@@ -17,8 +17,10 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
 
-    <header>
-        <nav class="navbar navbar-expand-lg pv-navbar sticky-top">
+    @* sticky-top header'a verilir: yapışkan (sticky) öğe, kapsayıcısının sınırları içinde kalır.
+       nav'a verilseydi kapsayıcısı olan header kadar yer kaplayıp sayfayla birlikte kayardı. *@
+    <header class="sticky-top">
+        <nav class="navbar navbar-expand-lg pv-navbar">
             <div class="container">
                 <a class="navbar-brand d-flex align-items-center gap-2" asp-area="" asp-controller="Home" asp-action="Index">
                     <img src="~/img/pativet-logo.svg" alt="" width="36" height="36" />
