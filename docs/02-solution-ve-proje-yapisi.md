@@ -279,7 +279,7 @@ Sertifika uyarısı alırsanız bir kez: `dotnet dev-certs https --trust`
 | Hata | Neden | Çözüm |
 |---|---|---|
 | `NETSDK1045: The current .NET SDK does not support targeting .NET 10.0` | .NET 10 SDK kurulu değil | .NET 10 SDK'yı kurun, VS'yi yeniden başlatın |
-| `NU1101/NU1102: Unable to find package` | NuGet kaynağı kapalı | VS → Araçlar → Seçenekler → NuGet Package Manager → Package Sources → `nuget.org` işaretli olsun |
+| `NU1101: Unable to find package` / *"Kaynaklarda bu kimliğe sahip paket yok: Microsoft Visual Studio Offline Packages"* | Bilgisayarın NuGet ayarlarında `nuget.org` kaynağı yok veya kapalı | Depo kökündeki `NuGet.config` dosyası `nuget.org` kaynağını tanımlar. Visual Studio'yu kapatıp çözümü yeniden açın → çözüme sağ tık → **Restore NuGet Packages** → derleyin |
 | `NU1008: Projects that use central package version management should not define the version` | Bir csproj'a sürümlü `PackageReference` eklenmiş | Sürümü csproj'dan silin, `Directory.Packages.props`'a yazın |
 | NuGet yöneticisi 11.0.0 güncellemesi öneriyor | .NET 11 çıktı | **Güncellemeyin**; 10.0.x'te kalın |
 | `Failed to determine the https port for redirect` uyarısı | `http` profiliyle çalıştırıldı | Normaldir; `https` profilinde görünmez |
