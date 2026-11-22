@@ -57,9 +57,28 @@ dotnet restore
 dotnet run --project src/VeterinerKlinigi.Web --launch-profile https
 ```
 
+### Veritabanı
+
+Bağlantı dizesi `src/VeterinerKlinigi.Web/appsettings.json` içindedir (varsayılan: SQL Server LocalDB, Windows kimlik doğrulaması, parola yok). Veritabanını oluşturmak için:
+
+```powershell
+# Visual Studio > Package Manager Console (Default project: VeterinerKlinigi.Data)
+Update-Database -Project VeterinerKlinigi.Data -StartupProject VeterinerKlinigi.Web
+
+# veya terminal
+dotnet tool install --global dotnet-ef --version 10.0.15
+dotnet ef database update --project src/VeterinerKlinigi.Data --startup-project src/VeterinerKlinigi.Web
+```
+
+Farklı bir SQL Server kullanıyorsanız `appsettings.json`'ı değiştirmeden kendi bağlantı dizenizi user-secrets ile tanımlayın:
+
+```powershell
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "<bağlantı dizeniz>" --project src/VeterinerKlinigi.Web
+```
+
 Uygulama: <https://localhost:7080> · API durum ucu: <https://localhost:7080/api/system/status>
 
-> Veritabanı, migration ve örnek hesap bilgileri ilgili aşamalar tamamlandıkça bu bölüme eklenecektir.
+> Örnek hesap bilgileri Gün 4'te eklenecektir.
 
 ## Roller
 
@@ -75,13 +94,14 @@ Uygulama: <https://localhost:7080> · API durum ucu: <https://localhost:7080/api
 |---|---|
 | [Aşama 1 — Gereksinim analizi ve mimari](docs/01-gereksinim-analizi-ve-mimari.md) | Gereksinimler, yetki matrisi, **ER diyagramı**, iş kuralları, katmanlı mimari, API ve MCP tasarımı |
 | [Aşama 2 — Solution ve proje yapısı](docs/02-solution-ve-proje-yapisi.md) | 5 proje, referanslar, paket yönetimi, Program.cs, tema |
+| [Aşama 3–4 — Entity'ler, DbContext ve migration](docs/03-entity-ve-dbcontext.md) | Entity sınıfları, ilişkiler, silme davranışları, CHECK kısıtları, index'ler |
 | [10 günlük geliştirme planı](docs/gelistirme-plani.md) | Gün gün yapılacaklar ve commit mesajları |
 
 ## Geliştirme durumu
 
 - [x] **Gün 1 —** Gereksinim analizi, ER diyagramı ve mimari tasarım
 - [x] **Gün 2 —** Solution ve katmanlı proje yapısı
-- [ ] **Gün 3 —** Entity sınıfları, DbContext ve ilk migration
+- [x] **Gün 3 —** Entity sınıfları, DbContext ve ilk migration
 - [ ] **Gün 4 —** Identity, roller ve hesap sayfaları
 - [ ] **Gün 5 —** Repository ve servis katmanı
 - [ ] **Gün 6 —** CRUD modülleri

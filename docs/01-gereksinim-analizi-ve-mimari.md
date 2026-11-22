@@ -178,7 +178,7 @@ Tip sütunundaki `TimeOnly` / `DateOnly`, .NET'in sadece saat / sadece tarih tip
 | Name | string(100) | Zorunlu |
 | Address | string(250) | Zorunlu |
 | Phone | string(20) | Zorunlu |
-| Email | string(100) | Geçerli e-posta |
+| Email | string(100) | Opsiyonel, geçerli e-posta |
 | Description | string(1000) | Opsiyonel |
 | OpeningTime | TimeOnly | Zorunlu |
 | ClosingTime | TimeOnly | `OpeningTime`'dan büyük olmalı |
@@ -423,12 +423,12 @@ EF Core'da varsayılan silme davranışı, zorunlu ilişkilerde **Cascade**'dir 
 |---|---|---|
 | Appointment | (VeterinarianId, AppointmentDate) | Çakışma kontrolü ve uygun saat hesaplama (en sık sorgu) |
 | Appointment | (OwnerId, AppointmentDate) | "Randevularım" listesi |
-| Appointment | (PetId), (Status) | Hayvan geçmişi, durum filtreleri |
-| Pet | (OwnerId) | "Evcil hayvanlarım" |
-| Vaccination | (PetId), (NextDoseDate) | Aşı geçmişi, yaklaşan aşılar |
+| Appointment | (PetId, AppointmentDate), (Status) | Hayvan geçmişi, durum filtreleri |
+| Pet | (OwnerId, Name) | "Evcil hayvanlarım", MCP `asi_takvimi(hayvanAdi)` |
+| Vaccination | (PetId, VaccinationDate), (NextDoseDate) | Aşı geçmişi, yaklaşan aşılar |
 | VeterinarianAvailability | (VeterinarianId, DayOfWeek) | Uygun saat hesaplama |
 | Veterinarian | (UserId) **UNIQUE** | 1 kullanıcı = 1 hekim |
-| Service | (ClinicId, Name) **UNIQUE** | Aynı klinikte aynı isimde iki hizmet olmaz |
+| Service | (ClinicId, Name) **UNIQUE**, filtreli (`IsActive = 1`) | Aynı klinikte aynı isimde iki aktif hizmet olmaz |
 | ExaminationNote | (AppointmentId) **UNIQUE** | 1 randevu = 1 muayene notu |
 
 ---
