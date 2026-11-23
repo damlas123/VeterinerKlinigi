@@ -11,6 +11,11 @@ namespace VeterinerKlinigi.API.Controllers;
 /// Hata cevapları standart "ProblemDetails" (application/problem+json) biçimindedir.
 /// </summary>
 [ApiController]
+// API controller'ları ayrı bir "Api" alanına (area) konur. Böylece MVC sayfalarındaki
+// asp-controller="Appointments" asp-action="Approve" gibi bağlantılar, aynı adlı API uçlarına
+// (/api/appointments/15/approve) değil, bulunulan panelin action'ına (/Admin/Appointments/Approve/15) gider.
+// API adresleri değişmez; area sadece bağlantı üretiminde kullanılan bir rota değeridir.
+[Area("Api")]
 [Produces("application/json")]
 // API'de yazma işlemleri sadece JWT ile yapılabildiği için (ApiPolicies.WriteAccess) CSRF riski yoktur;
 // MVC formları için eklenen global anti-forgery filtresi API'ye uygulanmaz.
