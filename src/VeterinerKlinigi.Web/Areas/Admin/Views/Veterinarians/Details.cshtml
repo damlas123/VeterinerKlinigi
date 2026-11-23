@@ -1,0 +1,80 @@
+@model VeterinarianDetailDto
+@{
+    var v = Model.Veterinarian;
+    ViewData["Title"] = v.FullName;
+}
+
+<a asp-action="Index" class="small text-decoration-none"><i class="bi bi-arrow-left"></i> Veterinerler</a>
+
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mt-2 mb-4">
+    <div class="d-flex align-items-center gap-3">
+        <span class="pv-avatar pv-avatar-lg">@DisplayText.Initial(v.FullName)</span>
+        <div>
+            <h1 class="h3 mb-1">
+                @v.FullName
+                @if (!v.IsActive) { <span class="badge text-bg-secondary align-middle fs-6">Pasif</span> }
+            </h1>
+            <div class="text-body-secondary">@v.Specialty · @v.ClinicName</div>
+        </div>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="Edit" asp-route-id="@v.Id" class="btn btn-outline-primary rounded-pill"><i class="bi bi-pencil me-1"></i>Düzenle</a>
+        <a asp-action="Delete" asp-route-id="@v.Id" class="btn btn-outline-danger rounded-pill"><i class="bi bi-trash me-1"></i>Sil</a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card pv-card mb-4">
+            <div class="card-body">
+                <h2 class="h6 mb-3">İletişim</h2>
+                <dl class="row mb-0 small">
+                    <dt class="col-4">E-posta</dt><dd class="col-8">@v.Email</dd>
+                    <dt class="col-4">Telefon</dt><dd class="col-8">@(v.PhoneNumber ?? "-")</dd>
+                    <dt class="col-4">Klinik</dt><dd class="col-8">@v.ClinicName</dd>
+                </dl>
+                @if (!string.IsNullOrWhiteSpace(v.Biography))
+                {
+                    <hr />
+                    <p class="small mb-0">@v.Biography</p>
+                }
+            </div>
+        </div>
+        <div class="card pv-card">
+            <div class="card-body">
+                <h2 class="h6 mb-3">Verdiği hizmetler</h2>
+                @if (v.Services.Count == 0)
+                {
+                    <p class="text-body-secondary small mb-0">Hizmet atanmamış — bu hekime randevu alınamaz.</p>
+                }
+                else
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (var s in v.Services)
+                        {
+                            <li class="list-group-item d-flex justify-content-between px-0">
+                                <span>@s.Name</span>
+                                <span class="text-body-secondary small">@s.Duration dk · @s.Price.ToString("C0")</span>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card pv-card">
+            <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <h2 class="h6 mb-0">Haftalık müsaitlik</h2>
+                <a asp-controller="Availability" asp-action="Create" asp-route-veterinarianId="@v.Id" class="btn btn-sm btn-primary rounded-pill"><i class="bi bi-plus-lg me-1"></i>Saat ekle</a>
+            </div>
+            <div class="card-body">
+                @{ ViewData["CanManage"] = true; }
+                <partial name="_AvailabilityTable" model="Model.Availabilities" view-data="ViewData" />
+            </div>
+        </div>
+        <div class="text-end mt-3">
+            <a asp-controller="Appointments" asp-action="Index" asp-route-VeterinarianId="@v.Id" class="small">Bu hekimin randevuları <i class="bi bi-arrow-right"></i></a>
+        </div>
+    </div>
+</div>

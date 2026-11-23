@@ -1,0 +1,204 @@
+@model AppointmentFormViewModel
+@*
+    Randevu sihirbazı: 1) evcil hayvan, 2) hizmet, 3) tarih → uygun saatler REST API'den
+    (GET /api/appointments/available-slots) jQuery ile alınır, 4) hekim + saat seçilir.
+    Sunucu, kaydederken çakışma ve müsaitlik kurallarını YENİDEN kontrol eder
+    (aynı anda başka biri aynı saati almış olabilir).
+*@
+@{
+    var pets = (List<PetDto>)ViewData["Pets"]!;
+    var services = (List<ServiceDto>)ViewData["Services"]!;
+    var minDate = DateOnly.FromDateTime(DateTime.Today).ToString("yyyy-MM-dd");
+    var isEdit = Model.Id is not null;
+}
+
+<a asp-action="@(isEdit ? "Details" : "Index")" asp-route-id="@Model.Id" class="small text-decoration-none"><i class="bi bi-arrow-left"></i> Geri dön</a>
+<h1 class="h3 mt-1 mb-4">@ViewData["Title"]</h1>
+
+@if (pets.Count == 0)
+{
+    <div class="card pv-card">
+        <div class="card-body text-center py-5">
+            <p class="mb-3">Randevu alabilmek için önce bir evcil hayvan eklemelisiniz.</p>
+            <a asp-controller="Pets" asp-action="Create" class="btn btn-primary rounded-pill">Evcil hayvan ekle</a>
+        </div>
+    </div>
+}
+else
+{
+    <form asp-action="@(isEdit ? "Edit" : "Create")" asp-route-id="@Model.Id" method="post" id="appointmentForm">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+        <input type="hidden" asp-for="VeterinarianId" />
+        <input type="hidden" asp-for="Time" />
+
+        <div class="row g-4">
+            <div class="col-xl-5">
+                <div class="card pv-card">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label asp-for="PetId" class="form-label"><span class="pv-step-no">1</span>Evcil hayvan</label>
+                            <select asp-for="PetId" class="form-select">
+                                <option value="">Seçin</option>
+                                @foreach (var p in pets)
+                                {
+                                    <option value="@p.Id" selected="@(p.Id == Model.PetId)">@p.Name (@p.SpeciesName)</option>
+                                }
+                            </select>
+                            <span asp-validation-for="PetId" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="ServiceId" class="form-label"><span class="pv-step-no">2</span>Hizmet</label>
+                            <select asp-for="ServiceId" class="form-select">
+                                <option value="">Seçin</option>
+                                @foreach (var group in services.GroupBy(s => s.ClinicName))
+                                {
+                                    <optgroup label="@group.Key">
+                                        @foreach (var s in group)
+                                        {
+                                            <option value="@s.Id" selected="@(s.Id == Model.ServiceId)" data-duration="@s.Duration" data-price="@s.Price.ToString("C0")">@s.Name · @s.Duration dk · @s.Price.ToString("C0")</option>
+                                        }
+                                    </optgroup>
+                                }
+                            </select>
+                            <span asp-validation-for="ServiceId" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Date" class="form-label"><span class="pv-step-no">3</span>Tarih</label>
+                            <input asp-for="Date" type="date" class="form-control" min="@minDate" />
+                            <span asp-validation-for="Date" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-0">
+                            <label asp-for="OwnerNote" class="form-label"></label>
+                            <textarea asp-for="OwnerNote" class="form-control" rows="3" placeholder="Şikâyet, belirtiler veya hekime notunuz"></textarea>
+                            <span asp-validation-for="OwnerNote" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-7">
+                <div class="card pv-card h-100">
+                    <div class="card-body">
+                        <h2 class="h6 mb-1"><span class="pv-step-no">4</span>Hekim ve saat</h2>
+                        <p class="small text-body-secondary mb-3">Yalnızca hekimin müsait olduğu, başka randevuyla çakışmayan saatler listelenir.</p>
+                        <div id="slotArea" class="pv-slot-area">
+                            <div class="pv-empty py-4"><i class="bi bi-clock"></i><p class="mb-0">Hizmet ve tarih seçin.</p></div>
+                        </div>
+                        <span asp-validation-for="Time" class="text-danger small d-block mt-2"></span>
+                        <span asp-validation-for="VeterinarianId" class="text-danger small d-block"></span>
+                        <div id="selectionSummary" class="alert alert-success mt-3 mb-0 d-none"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2 mt-4">
+            <button type="submit" class="btn btn-primary rounded-pill px-4"><i class="bi bi-calendar-check me-1"></i>@(isEdit ? "Kaydet" : "Randevu talebi oluştur")</button>
+            <a asp-action="@(isEdit ? "Details" : "Index")" asp-route-id="@Model.Id" class="btn btn-light rounded-pill px-4">Vazgeç</a>
+        </div>
+        @if (isEdit)
+        {
+            <p class="small text-body-secondary mt-2 mb-0"><i class="bi bi-info-circle me-1"></i>Onaylanmış bir randevuyu değiştirirseniz randevu yeniden hekim onayına düşer.</p>
+        }
+    </form>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(function () {
+            var $service = $('#ServiceId'), $date = $('#Date'), $vet = $('#VeterinarianId'), $time = $('#Time');
+            var $area = $('#slotArea'), $summary = $('#selectionSummary');
+            var excludeId = @(Model.Id?.ToString() ?? "null");
+            var selectedVet = $vet.val(), selectedTime = $time.val();
+            var request = null;
+
+            function message(icon, text, css) {
+                $area.html('<div class="pv-empty py-4 ' + (css || '') + '"><i class="bi ' + icon + '"></i><p class="mb-0"></p></div>');
+                $area.find('p').text(text);
+            }
+
+            function clearSelection() {
+                $vet.val(''); $time.val('');
+                $summary.addClass('d-none');
+            }
+
+            function showSummary(vetName) {
+                var serviceText = $service.find('option:selected').text();
+                $summary.removeClass('d-none').html('<i class="bi bi-check-circle me-1"></i>')
+                    .append(document.createTextNode(new Date($date.val() + 'T00:00').toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', weekday: 'long' }) +
+                        ' · ' + $time.val() + ' · ' + vetName + ' · ' + serviceText));
+            }
+
+            function loadSlots() {
+                if (!$service.val() || !$date.val()) {
+                    message('bi-clock', 'Hizmet ve tarih seçin.');
+                    return;
+                }
+                if (request) { request.abort(); }
+                message('bi-hourglass-split', 'Uygun saatler yükleniyor...');
+
+                var query = { serviceId: $service.val(), date: $date.val() };
+                if (excludeId) { query.excludeAppointmentId = excludeId; }
+
+                request = $.getJSON('/api/appointments/available-slots', query)
+                    .done(function (vets) {
+                        var withSlots = $.grep(vets, function (v) { return v.slots.length > 0; });
+                        if (withSlots.length === 0) {
+                            message('bi-calendar-x', 'Bu tarihte bu hizmet için boş saat yok. Başka bir tarih deneyin.');
+                            clearSelection();
+                            return;
+                        }
+                        $area.empty();
+                        var stillValid = false;
+                        $.each(withSlots, function (_, v) {
+                            var $block = $('<div class="pv-slot-vet mb-3">');
+                            $('<div class="fw-semibold mb-2">').text(v.veterinarianName).append($('<span class="text-body-secondary fw-normal small ms-2">').text(v.specialty)).appendTo($block);
+                            var $slots = $('<div class="d-flex flex-wrap gap-2">').appendTo($block);
+                            $.each(v.slots, function (_, slot) {
+                                var active = String(v.veterinarianId) === String(selectedVet) && slot === selectedTime;
+                                if (active) { stillValid = true; }
+                                $('<button type="button" class="btn btn-sm pv-slot">')
+                                    .toggleClass('active', active)
+                                    .text(slot)
+                                    .attr({ 'data-vet': v.veterinarianId, 'data-vet-name': v.veterinarianName, 'data-time': slot })
+                                    .appendTo($slots);
+                            });
+                            $area.append($block);
+                        });
+                        if (stillValid) {
+                            showSummary($area.find('.pv-slot.active').data('vet-name'));
+                        } else {
+                            clearSelection();
+                        }
+                    })
+                    .fail(function (xhr, status) {
+                        if (status === 'abort') { return; }
+                        var problem = xhr.responseJSON || {};
+                        message('bi-exclamation-triangle', problem.detail || problem.title || 'Saatler alınamadı.', 'text-danger');
+                        clearSelection();
+                    });
+            }
+
+            $area.on('click', '.pv-slot', function () {
+                $area.find('.pv-slot').removeClass('active');
+                $(this).addClass('active');
+                selectedVet = $(this).data('vet');
+                selectedTime = $(this).data('time');
+                $vet.val(selectedVet);
+                $time.val(selectedTime);
+                $('[data-valmsg-for="Time"], [data-valmsg-for="VeterinarianId"]').text('');
+                showSummary($(this).data('vet-name'));
+            });
+
+            $service.add($date).on('change', function () {
+                selectedVet = null; selectedTime = null;
+                loadSlots();
+            });
+
+            // Gizli alanlar da doğrulansın (jQuery Validate varsayılan olarak gizli alanları atlar).
+            $('#appointmentForm').data('validator') && ($('#appointmentForm').data('validator').settings.ignore = ':hidden:not(#Time, #VeterinarianId)');
+
+            loadSlots();
+        });
+    </script>
+}

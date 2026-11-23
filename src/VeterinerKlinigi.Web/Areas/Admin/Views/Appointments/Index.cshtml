@@ -1,0 +1,21 @@
+@model List<AppointmentDto>
+@{
+    ViewData["Title"] = "Randevular";
+    var filter = (AppointmentFilter)ViewData["Filter"]!;
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+        <h1 class="h3 mb-1">Randevular</h1>
+        <p class="text-body-secondary mb-0">Tüm kliniklerin randevuları · @Model.Count kayıt</p>
+    </div>
+</div>
+
+<partial name="_AppointmentFilter" model="filter" view-data="ViewData" />
+
+<div class="card pv-card">
+    <div class="card-body">
+        @{ ViewData["ShowOwner"] = true; ViewData["ShowVet"] = true; }
+        <partial name="_AppointmentTable" model="Model" view-data="ViewData" />
+    </div>
+</div>

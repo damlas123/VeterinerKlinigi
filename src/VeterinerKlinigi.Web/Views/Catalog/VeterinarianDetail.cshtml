@@ -1,0 +1,60 @@
+@model VeterinarianDetailDto
+@{
+    var v = Model.Veterinarian;
+    ViewData["Title"] = v.FullName;
+}
+
+<section class="container py-5">
+    <a asp-action="Veterinarians" class="small text-decoration-none"><i class="bi bi-arrow-left"></i> Veterinerlerimiz</a>
+    <div class="row g-4 mt-1">
+        <div class="col-lg-7">
+            <div class="card pv-card h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="pv-vet-avatar pv-vet-avatar-lg">@v.FullName.Split(' ').Last()[..1]</div>
+                        <div>
+                            <h1 class="h3 mb-1">@v.FullName</h1>
+                            <div class="text-primary">@v.Specialty</div>
+                            <div class="small text-body-secondary"><i class="bi bi-hospital me-1"></i>@v.ClinicName</div>
+                        </div>
+                    </div>
+                    <p>@v.Biography</p>
+                    <h2 class="h6 mt-4">Verdiği hizmetler</h2>
+                    <ul class="list-group list-group-flush">
+                        @foreach (var s in v.Services)
+                        {
+                            <li class="list-group-item d-flex justify-content-between px-0">
+                                <span>@s.Name <span class="small text-body-secondary">· @s.Duration dk</span></span>
+                                <span class="fw-semibold">@s.Price.ToString("C2")</span>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="card pv-card h-100">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3"><i class="bi bi-clock me-2 text-primary"></i>Haftalık çalışma saatleri</h2>
+                    @if (Model.Availabilities.Count == 0)
+                    {
+                        <p class="text-body-secondary">Çalışma saati tanımlanmamış.</p>
+                    }
+                    else
+                    {
+                        <ul class="list-unstyled d-grid gap-2">
+                            @foreach (var day in Model.Availabilities.GroupBy(a => a.DayName))
+                            {
+                                <li class="d-flex justify-content-between">
+                                    <span class="fw-semibold">@day.Key</span>
+                                    <span>@string.Join(", ", day.Select(a => $"{a.StartTime:HH\\:mm}-{a.EndTime:HH\\:mm}"))</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    <a asp-controller="Panel" asp-action="Index" class="btn btn-primary rounded-pill w-100 mt-3"><i class="bi bi-calendar-plus me-1"></i>Randevu al</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

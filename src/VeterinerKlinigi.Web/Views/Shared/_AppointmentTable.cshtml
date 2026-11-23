@@ -1,0 +1,65 @@
+@model IEnumerable<AppointmentDto>
+@*
+    Randevu tablosu (üç panelde ortak). Detay bağlantısı, bulunulan Area'nın
+    Appointments/Details sayfasına gider.
+    ViewData["ShowOwner"]: sahip sütunu, ViewData["ShowVet"]: hekim sütunu gösterilsin mi?
+*@
+@{
+    var showOwner = ViewData["ShowOwner"] as bool? ?? false;
+    var showVet = ViewData["ShowVet"] as bool? ?? true;
+    var list = Model.ToList();
+}
+@if (list.Count == 0)
+{
+    <div class="pv-empty">
+        <i class="bi bi-calendar-x"></i>
+        <p class="mb-0">Gösterilecek randevu yok.</p>
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table pv-table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Tarih / saat</th>
+                    <th>Evcil hayvan</th>
+                    @if (showOwner) { <th>Sahibi</th> }
+                    <th>Hizmet</th>
+                    @if (showVet) { <th>Veteriner</th> }
+                    <th class="text-end">Ücret</th>
+                    <th>Durum</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in list)
+                {
+                    <tr>
+                        <td>
+                            <div class="fw-semibold">@a.AppointmentDate.ToString("dd.MM.yyyy")</div>
+                            <div class="small text-body-secondary">@a.AppointmentDate.ToString("HH:mm") - @a.EndDate.ToString("HH:mm")</div>
+                        </td>
+                        <td>
+                            <div class="fw-semibold">@a.PetName</div>
+                            <div class="small text-body-secondary">@DisplayText.Species(a.Species)</div>
+                        </td>
+                        @if (showOwner) { <td>@a.OwnerName</td> }
+                        <td>
+                            <div>@a.ServiceName</div>
+                            <div class="small text-body-secondary">@a.ClinicName · @a.Duration dk</div>
+                        </td>
+                        @if (showVet) { <td>@a.VeterinarianName</td> }
+                        <td class="text-end">@a.Price.ToString("C2")</td>
+                        <td><partial name="_StatusBadge" model="a.Status" /></td>
+                        <td class="text-end">
+                            <a asp-controller="Appointments" asp-action="Details" asp-route-id="@a.Id" class="btn btn-sm btn-outline-primary rounded-pill">
+                                Detay <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

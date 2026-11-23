@@ -1,0 +1,43 @@
+@model List<ExaminationNoteDto>
+@{
+    ViewData["Title"] = "Muayene notlarım";
+}
+
+<div class="mb-4">
+    <h1 class="h3 mb-1">Muayene notlarım</h1>
+    <p class="text-body-secondary mb-0">Tamamladığınız randevuların tanı ve tedavi kayıtları</p>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="card pv-card"><div class="card-body"><div class="pv-empty"><i class="bi bi-journal-medical"></i><p class="mb-0">Henüz muayene notu yok. Onaylı bir randevunun detayından "Muayeneyi tamamla" ile not ekleyebilirsiniz.</p></div></div></div>
+}
+else
+{
+    <div class="pv-timeline">
+        @foreach (var n in Model)
+        {
+            <div class="pv-timeline-item">
+                <div class="card pv-card">
+                    <div class="card-body">
+                        <div class="d-flex flex-wrap justify-content-between gap-2 mb-2">
+                            <div>
+                                <a asp-controller="Patients" asp-action="Details" asp-route-id="@n.PetId" class="fw-semibold text-decoration-none">@n.PetName</a>
+                                <span class="text-body-secondary">· @n.ServiceName · @n.AppointmentDate.ToString("dd.MM.yyyy HH:mm")</span>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <a asp-controller="Appointments" asp-action="Details" asp-route-id="@n.AppointmentId" class="btn btn-sm btn-light rounded-pill">Randevu</a>
+                                <a asp-action="Edit" asp-route-id="@n.Id" class="btn btn-sm btn-outline-primary rounded-pill"><i class="bi bi-pencil"></i> Düzenle</a>
+                            </div>
+                        </div>
+                        <div class="row g-3 small">
+                            <div class="col-md-4"><div class="pv-label">Tanı</div>@n.Diagnosis</div>
+                            <div class="col-md-5"><div class="pv-label">Tedavi</div>@n.Treatment</div>
+                            <div class="col-md-3"><div class="pv-label">Ek not</div>@(n.Notes ?? "-")</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

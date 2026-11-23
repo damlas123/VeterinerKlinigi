@@ -1,0 +1,39 @@
+@model List<ClinicDto>
+@{
+    ViewData["Title"] = "İletişim";
+}
+
+<section class="container py-5">
+    <div class="text-center mb-5">
+        <span class="badge rounded-pill pv-badge mb-3"><i class="bi bi-telephone me-1"></i>İletişim</span>
+        <h1 class="fw-bold">Bize ulaşın</h1>
+        <p class="text-body-secondary">Randevu için online sistemi kullanabilir veya kliniklerimizi arayabilirsiniz.</p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+        @foreach (var c in Model)
+        {
+            <div class="col-md-6 col-lg-5">
+                <div class="card pv-card h-100">
+                    <div class="card-body p-4">
+                        <h5 class="mb-3"><i class="bi bi-hospital me-2 text-primary"></i>@c.Name</h5>
+                        <ul class="list-unstyled d-grid gap-2 mb-0">
+                            <li><i class="bi bi-geo-alt me-2 text-primary"></i>@c.Address</li>
+                            <li><i class="bi bi-telephone me-2 text-primary"></i><a href="tel:@c.Phone.Replace(" ", "")">@c.Phone</a></li>
+                            @if (!string.IsNullOrEmpty(c.Email))
+                            {
+                                <li><i class="bi bi-envelope me-2 text-primary"></i><a href="mailto:@c.Email">@c.Email</a></li>
+                            }
+                            <li><i class="bi bi-clock me-2 text-primary"></i>Her gün @c.OpeningTime.ToString("HH:mm") - @c.ClosingTime.ToString("HH:mm")
+                                <span class="small text-body-secondary">(hekimlerin çalışma günleri farklılık gösterebilir)</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="text-center mt-5">
+        <a asp-controller="Panel" asp-action="Index" class="btn btn-primary btn-lg rounded-pill px-4"><i class="bi bi-calendar-plus me-2"></i>Online randevu al</a>
+    </div>
+</section>

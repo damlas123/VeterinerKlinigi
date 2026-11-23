@@ -1,0 +1,63 @@
+@model List<ClinicDto>
+@{
+    ViewData["Title"] = "Hakkımızda";
+}
+
+<section class="pv-hero py-5">
+    <div class="container">
+        <span class="badge rounded-pill pv-badge mb-3"><i class="bi bi-info-circle me-1"></i>Hakkımızda</span>
+        <h1 class="display-6 fw-bold">Dostlarınız için modern veteriner hekimliği</h1>
+        <p class="lead text-body-secondary col-lg-8 mb-0">
+            PatiVet; kedi, köpek, kuş, tavşan ve egzotik hayvanlar için koruyucu hekimlik, aşılama, cerrahi,
+            dermatoloji ve bakım hizmetleri sunan veteriner klinikleri ağıdır. Online randevu sistemi sayesinde
+            hekiminizi ve size uygun saati birkaç tıklamayla seçebilir, evcil hayvanınızın tüm sağlık geçmişine
+            tek yerden ulaşabilirsiniz.
+        </p>
+    </div>
+</section>
+
+<section class="container py-5">
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card pv-card h-100"><div class="card-body">
+                <div class="pv-icon pv-icon-green mb-3"><i class="bi bi-heart-pulse"></i></div>
+                <h5>Misyonumuz</h5>
+                <p class="text-body-secondary mb-0">Evcil hayvanların sağlıklı ve uzun bir yaşam sürmesi için erişilebilir, şeffaf ve güvenilir veteriner hizmeti sunmak.</p>
+            </div></div>
+        </div>
+        <div class="col-md-4">
+            <div class="card pv-card h-100"><div class="card-body">
+                <div class="pv-icon pv-icon-sky mb-3"><i class="bi bi-clipboard2-pulse"></i></div>
+                <h5>Kayıtlı sağlık geçmişi</h5>
+                <p class="text-body-secondary mb-0">Her muayene ve aşı kaydı dijital olarak saklanır; hekiminiz geçmişe tek tıkla ulaşır.</p>
+            </div></div>
+        </div>
+        <div class="col-md-4">
+            <div class="card pv-card h-100"><div class="card-body">
+                <div class="pv-icon pv-icon-lavender mb-3"><i class="bi bi-shield-check"></i></div>
+                <h5>Güvenli altyapı</h5>
+                <p class="text-body-secondary mb-0">Kişisel verileriniz rol bazlı yetkilendirme ile korunur; her kullanıcı yalnızca kendi kayıtlarını görür.</p>
+            </div></div>
+        </div>
+    </div>
+
+    <h2 class="fw-bold mb-4">Kliniklerimiz</h2>
+    <div class="row g-4">
+        @foreach (var c in Model)
+        {
+            <div class="col-md-6">
+                <div class="card pv-card h-100">
+                    <div class="card-body">
+                        <h5 class="mb-1">@c.Name</h5>
+                        <p class="text-body-secondary small">@c.Description</p>
+                        <div class="d-flex flex-wrap gap-3 small">
+                            <span><i class="bi bi-person-badge me-1 text-primary"></i>@c.VeterinarianCount veteriner</span>
+                            <span><i class="bi bi-clipboard2-pulse me-1 text-primary"></i>@c.ServiceCount hizmet</span>
+                            <span><i class="bi bi-clock me-1 text-primary"></i>@c.OpeningTime.ToString("HH:mm") - @c.ClosingTime.ToString("HH:mm")</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>

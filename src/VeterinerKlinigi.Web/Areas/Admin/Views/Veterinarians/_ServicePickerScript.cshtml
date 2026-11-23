@@ -1,0 +1,19 @@
+<script>
+    // Klinik seçimine göre hizmet listesini süz.
+    $(function () {
+        var $clinic = $('#ClinicId');
+        function filterServices(clearOthers) {
+            var clinicId = $clinic.val();
+            var visible = 0;
+            $('[data-clinic-id]').each(function () {
+                var match = $(this).data('clinic-id').toString() === clinicId;
+                $(this).toggle(match);
+                if (match) { visible++; }
+                else if (clearOthers) { $(this).find('input').prop('checked', false); }
+            });
+            $('[data-service-hint]').text(!clinicId ? 'Önce klinik seçin.' : (visible === 0 ? 'Bu klinikte tanımlı hizmet yok.' : 'Hekimin verebileceği hizmetleri işaretleyin.'));
+        }
+        $clinic.on('change', function () { filterServices(true); });
+        filterServices(false);
+    });
+</script>

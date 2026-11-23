@@ -21,6 +21,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Geliştirme ortamında /openapi/v1.json adresinde API dokümanı üretir -->
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <!-- MCP sunucusu: /mcp ucu ve [McpServerTool] araçları (resmî C# SDK) -->
+    <PackageReference Include="ModelContextProtocol.AspNetCore" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!--
       Migration komutlarının (dotnet ef / Add-Migration) çalışabilmesi için gerekli.
       PrivateAssets=all: Bu paketler sadece geliştirme sırasında kullanılır, yayımlanan uygulamaya girmez.

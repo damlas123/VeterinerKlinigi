@@ -21,13 +21,13 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.15" />
   </ItemGroup>
 
-  <!-- REST API: JWT ve OpenAPI dokümanı (Aşama 9'da projelere eklenecek) -->
+  <!-- REST API: JWT (API projesi) ve OpenAPI dokümanı (Web projesi) -->
   <ItemGroup>
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.15" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.15" />
   </ItemGroup>
 
-  <!-- MCP sunucusu: resmî C# SDK (Aşama 10'da projeye eklenecek) -->
+  <!-- MCP sunucusu: resmî C# SDK (Web projesi) -->
   <ItemGroup>
     <PackageVersion Include="ModelContextProtocol.AspNetCore" Version="2.4.0" />
   </ItemGroup>

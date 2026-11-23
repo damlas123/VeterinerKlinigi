@@ -1,0 +1,43 @@
+@model IEnumerable<AvailabilityDto>
+@* Haftalık müsaitlik tablosu. ViewData["CanManage"]: düzenle/sil düğmeleri (bulunulan panelin Availability controller'ı). *@
+@{
+    var canManage = ViewData["CanManage"] as bool? ?? false;
+    var list = Model.ToList();
+}
+@if (list.Count == 0)
+{
+    <div class="pv-empty py-4">
+        <i class="bi bi-clock"></i>
+        <p class="mb-0">Henüz müsaitlik saati tanımlanmamış. Müsaitlik olmadan randevu alınamaz.</p>
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table pv-table align-middle mb-0">
+            <thead>
+                <tr><th>Gün</th><th>Başlangıç</th><th>Bitiş</th><th>Süre</th>@if (canManage) { <th></th> }</tr>
+            </thead>
+            <tbody>
+                @foreach (var a in list)
+                {
+                    <tr>
+                        <td class="fw-semibold">@a.DayName</td>
+                        <td>@a.StartTime.ToString("HH:mm")</td>
+                        <td>@a.EndTime.ToString("HH:mm")</td>
+                        <td class="text-body-secondary">@((a.EndTime - a.StartTime).TotalHours.ToString("0.#")) saat</td>
+                        @if (canManage)
+                        {
+                            <td class="text-end text-nowrap">
+                                <a asp-controller="Availability" asp-action="Edit" asp-route-id="@a.Id" class="btn btn-sm btn-outline-primary rounded-pill" title="Düzenle"><i class="bi bi-pencil"></i></a>
+                                <form asp-controller="Availability" asp-action="Delete" asp-route-id="@a.Id" method="post" class="d-inline" data-confirm="@a.DayName @a.StartTime.ToString("HH:mm")-@a.EndTime.ToString("HH:mm") aralığı silinsin mi?">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill" title="Sil"><i class="bi bi-trash"></i></button>
+                                </form>
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

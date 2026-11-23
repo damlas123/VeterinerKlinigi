@@ -1,0 +1,84 @@
+@model AdminDashboardDto
+@{
+    ViewData["Title"] = "Yönetim Paneli";
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+        <h1 class="h3 mb-1">Yönetim Paneli</h1>
+        <p class="text-body-secondary mb-0">Sistemin genel durumu · @DateTime.Today.ToString("dd MMMM yyyy dddd")</p>
+    </div>
+    <a asp-controller="Reports" asp-action="Index" class="btn btn-outline-primary rounded-pill"><i class="bi bi-bar-chart-line me-1"></i>Ciro raporu</a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Bugünkü randevular", Model.TodayAppointmentCount.ToString(), "bi-calendar-day", "pv-icon-green", Url.Action("Index", "Appointments", new { From = DateTime.Today.ToString("yyyy-MM-dd"), To = DateTime.Today.ToString("yyyy-MM-dd") }))' /></div>
+    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Onay bekleyen", Model.PendingAppointmentCount.ToString(), "bi-hourglass-split", "pv-icon-peach", Url.Action("Index", "Appointments", new { Status = "Pending" }))' /></div>
+    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Bu ayki ciro", Model.MonthRevenue.ToString("C0"), "bi-cash-coin", "pv-icon-sky", Url.Action("Index", "Reports"), "Tamamlanan randevular")' /></div>
+    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Evcil hayvan", Model.PetCount.ToString(), "bi-heart", "pv-icon-lavender", Url.Action("Index", "Pets"))' /></div>
+    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Üye", Model.MemberCount.ToString(), "bi-people", "pv-icon-green", Url.Action("Index", "Owners", new { role = RoleNames.Member }))' /></div>
+    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Veteriner", Model.VeterinarianCount.ToString(), "bi-person-badge", "pv-icon-peach", Url.Action("Index", "Veterinarians"))' /></div>
+    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Klinik", Model.ClinicCount.ToString(), "bi-hospital", "pv-icon-sky", Url.Action("Index", "Clinics"))' /></div>
+    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Hizmet", Model.ServiceCount.ToString(), "bi-clipboard2-pulse", "pv-icon-lavender", Url.Action("Index", "Services"))' /></div>
+</div>
+
+@* Grafik verileri REST API'den (GET /api/reports/dashboard) jQuery ile alınır — oturum çerezi kullanılır. *@
+<div class="row g-4 mb-4">
+    <div class="col-xl-8">
+        <div class="card pv-card h-100">
+            <div class="card-body">
+                <h2 class="h6 mb-3">Son 6 ay: randevu sayısı ve ciro</h2>
+                <div class="pv-chart"><canvas id="monthlyChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4">
+        <div class="card pv-card h-100">
+            <div class="card-body">
+                <h2 class="h6 mb-3">Randevu durumları</h2>
+                <div class="pv-chart"><canvas id="statusChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-xl-8">
+        <div class="card pv-card h-100">
+            <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <h2 class="h6 mb-0">Onay bekleyen yaklaşan randevular</h2>
+                <a asp-controller="Appointments" asp-action="Index" asp-route-Status="Pending" class="small">Tümü</a>
+            </div>
+            <div class="card-body">
+                @{ ViewData["ShowOwner"] = true; ViewData["ShowVet"] = true; }
+                <partial name="_AppointmentTable" model="Model.PendingAppointments" view-data="ViewData" />
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4">
+        <div class="card pv-card h-100">
+            <div class="card-body">
+                <h2 class="h6 mb-3">Türlere göre evcil hayvanlar</h2>
+                <div class="pv-chart"><canvas id="speciesChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/chart.js/chart.umd.min.js"></script>
+    <script src="~/js/charts.js" asp-append-version="true"></script>
+    <script>
+        $(function () {
+            $.getJSON('/api/reports/dashboard')
+                .done(function (data) {
+                    PatiCharts.monthly('monthlyChart', data.monthlyTrend);
+                    PatiCharts.doughnut('statusChart', data.statusDistribution);
+                    PatiCharts.doughnut('speciesChart', data.speciesDistribution);
+                })
+                .fail(function () {
+                    $('.pv-chart').html('<p class="text-danger small">Grafik verileri yüklenemedi.</p>');
+                });
+        });
+    </script>
+}

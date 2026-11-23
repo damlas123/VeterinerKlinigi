@@ -1,0 +1,123 @@
+@{
+    ViewData["Title"] = "Ciro raporu";
+    var clinics = (List<SelectListItem>)ViewData["Clinics"]!;
+}
+
+<div class="mb-4">
+    <h1 class="h3 mb-1">Hizmet bazında ciro raporu</h1>
+    <p class="text-body-secondary mb-0">
+        Veriler REST API'den alınır: <code>GET /api/reports/revenue?from=&amp;to=&amp;clinicId=</code>.
+        Ciroya yalnızca <strong>tamamlanan</strong> randevuların ücreti eklenir.
+    </p>
+</div>
+
+<form id="reportForm" class="card pv-card mb-4">
+    <div class="card-body">
+        <div class="row g-2 align-items-end">
+            <div class="col-sm-4 col-lg-3">
+                <label class="form-label small mb-1" for="from">Başlangıç</label>
+                <input type="date" id="from" name="from" value="@ViewData["From"]" class="form-control" required />
+            </div>
+            <div class="col-sm-4 col-lg-3">
+                <label class="form-label small mb-1" for="to">Bitiş</label>
+                <input type="date" id="to" name="to" value="@ViewData["To"]" class="form-control" required />
+            </div>
+            <div class="col-sm-4 col-lg-3">
+                <label class="form-label small mb-1" for="clinicId">Klinik</label>
+                <select id="clinicId" name="clinicId" class="form-select" asp-items="clinics">
+                    <option value="">Tüm klinikler</option>
+                </select>
+            </div>
+            <div class="col-lg-3">
+                <button type="submit" class="btn btn-primary rounded-pill px-4 w-100"><i class="bi bi-arrow-repeat me-1"></i>Raporu getir</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div id="reportError" class="alert alert-danger d-none"></div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4"><partial name="_StatCard" model='new StatCardModel("Toplam randevu", "-", "bi-calendar2-week", "pv-icon-sky")' /></div>
+    <div class="col-md-4"><partial name="_StatCard" model='new StatCardModel("Tamamlanan", "-", "bi-clipboard2-check", "pv-icon-green")' /></div>
+    <div class="col-md-4"><partial name="_StatCard" model='new StatCardModel("Toplam ciro", "-", "bi-cash-coin", "pv-icon-peach")' /></div>
+</div>
+
+<div class="row g-4">
+    <div class="col-xl-5">
+        <div class="card pv-card h-100">
+            <div class="card-body">
+                <h2 class="h6 mb-3">Hizmetlere göre ciro</h2>
+                <div class="pv-chart pv-chart-tall"><canvas id="revenueChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-7">
+        <div class="card pv-card h-100">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table pv-table align-middle mb-0">
+                        <thead><tr><th>Hizmet</th><th>Klinik</th><th class="text-center">Randevu</th><th class="text-center">Tamamlanan</th><th class="text-end">Ciro</th></tr></thead>
+                        <tbody id="reportRows">
+                            <tr><td colspan="5" class="text-center text-body-secondary py-4">Yükleniyor...</td></tr>
+                        </tbody>
+                        <tfoot class="fw-bold" id="reportTotals"></tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/chart.js/chart.umd.min.js"></script>
+    <script src="~/js/charts.js" asp-append-version="true"></script>
+    <script>
+        $(function () {
+            var money = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' });
+            var $cards = $('.pv-stat .fs-4');
+
+            function load() {
+                var query = { from: $('#from').val(), to: $('#to').val() };
+                if ($('#clinicId').val()) { query.clinicId = $('#clinicId').val(); }
+                $('#reportError').addClass('d-none');
+
+                $.getJSON('/api/reports/revenue', query)
+                    .done(function (report) {
+                        var $rows = $('#reportRows').empty();
+                        if (report.items.length === 0) {
+                            $rows.append('<tr><td colspan="5" class="text-center text-body-secondary py-4">Bu aralıkta randevu yok.</td></tr>');
+                        }
+                        $.each(report.items, function (_, item) {
+                            $('<tr>')
+                                .append($('<td class="fw-semibold">').text(item.serviceName))
+                                .append($('<td>').text(item.clinicName))
+                                .append($('<td class="text-center">').text(item.appointmentCount))
+                                .append($('<td class="text-center">').text(item.completedCount))
+                                .append($('<td class="text-end">').text(money.format(item.totalRevenue)))
+                                .appendTo($rows);
+                        });
+                        $('#reportTotals').html('').append(
+                            $('<tr>')
+                                .append($('<td colspan="2">').text('Toplam'))
+                                .append($('<td class="text-center">').text(report.totalAppointments))
+                                .append($('<td class="text-center">').text(report.totalCompleted))
+                                .append($('<td class="text-end">').text(money.format(report.totalRevenue))));
+
+                        $cards.eq(0).text(report.totalAppointments);
+                        $cards.eq(1).text(report.totalCompleted);
+                        $cards.eq(2).text(money.format(report.totalRevenue));
+
+                        PatiCharts.revenue('revenueChart', report.items);
+                    })
+                    .fail(function (xhr) {
+                        var problem = xhr.responseJSON || {};
+                        $('#reportError').text(problem.detail || problem.title || 'Rapor alınamadı.').removeClass('d-none');
+                    });
+            }
+
+            $('#reportForm').on('submit', function (e) { e.preventDefault(); load(); });
+            load();
+        });
+    </script>
+}

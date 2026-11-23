@@ -1,0 +1,75 @@
+@model RegisterViewModel
+@{
+    ViewData["Title"] = "Kayıt ol";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-7">
+            <div class="card pv-card pv-auth-card">
+                <div class="card-body p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <img src="~/img/pativet-logo.svg" alt="" width="56" height="56" class="mb-3" />
+                        <h1 class="h3 mb-1">Üye olun</h1>
+                        <p class="text-body-secondary mb-0">Evcil hayvanlarınızı ekleyin, online randevu alın</p>
+                    </div>
+
+                    <form asp-action="Register" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <label asp-for="FirstName" class="form-label"></label>
+                                <input asp-for="FirstName" class="form-control" autocomplete="given-name" />
+                                <span asp-validation-for="FirstName" class="text-danger small"></span>
+                            </div>
+                            <div class="col-sm-6">
+                                <label asp-for="LastName" class="form-label"></label>
+                                <input asp-for="LastName" class="form-control" autocomplete="family-name" />
+                                <span asp-validation-for="LastName" class="text-danger small"></span>
+                            </div>
+                            <div class="col-sm-7">
+                                <label asp-for="Email" class="form-label"></label>
+                                <input asp-for="Email" class="form-control" autocomplete="email" />
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+                            <div class="col-sm-5">
+                                <label asp-for="PhoneNumber" class="form-label"></label>
+                                <input asp-for="PhoneNumber" class="form-control" autocomplete="tel" placeholder="05xx xxx xx xx" />
+                                <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                            </div>
+                            <div class="col-sm-6">
+                                <label asp-for="Password" class="form-label"></label>
+                                <input asp-for="Password" class="form-control" autocomplete="new-password" />
+                                <span asp-validation-for="Password" class="text-danger small"></span>
+                            </div>
+                            <div class="col-sm-6">
+                                <label asp-for="ConfirmPassword" class="form-label"></label>
+                                <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" />
+                                <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-text"><i class="bi bi-shield-lock me-1"></i>Parola en az 8 karakter olmalı; büyük harf, küçük harf ve rakam içermelidir.</div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input asp-for="AcceptTerms" class="form-check-input" />
+                                    <label asp-for="AcceptTerms" class="form-check-label"></label>
+                                </div>
+                                <span asp-validation-for="AcceptTerms" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill w-100 mt-4">
+                            <i class="bi bi-person-plus me-2"></i>Kayıt ol
+                        </button>
+                    </form>
+
+                    <p class="text-center mt-4 mb-0">Zaten üye misiniz? <a asp-action="Login">Giriş yapın</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,38 @@
+@model RejectAppointmentDto
+@{
+    var a = (AppointmentDto)ViewData["Appointment"]!;
+    ViewData["Title"] = "Randevuyu reddet";
+}
+
+<a asp-action="Details" asp-route-id="@a.Id" class="small text-decoration-none"><i class="bi bi-arrow-left"></i> Randevu detayı</a>
+<h1 class="h3 mt-1 mb-4">Randevuyu reddet</h1>
+
+<div class="row">
+    <div class="col-lg-7">
+        <div class="card pv-card">
+            <div class="card-body">
+                <p class="mb-3">
+                    <strong>@a.PetName</strong> · @a.ServiceName ·
+                    @a.AppointmentDate.ToString("dd.MM.yyyy HH:mm") · @a.VeterinarianName
+                </p>
+                <form asp-action="Reject" asp-route-id="@a.Id" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                    <div class="mb-3">
+                        <label asp-for="Reason" class="form-label"></label>
+                        <textarea asp-for="Reason" class="form-control" rows="4" placeholder="Örn: Hekimimiz o gün ameliyatta olacak, lütfen başka bir saat seçin."></textarea>
+                        <span asp-validation-for="Reason" class="text-danger small"></span>
+                        <div class="form-text">Gerekçe hayvan sahibine gösterilir. Randevu reddedilince saat tekrar boşa çıkar.</div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger rounded-pill px-4"><i class="bi bi-x-circle me-1"></i>Reddet</button>
+                        <a asp-action="Details" asp-route-id="@a.Id" class="btn btn-light rounded-pill px-4">Vazgeç</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

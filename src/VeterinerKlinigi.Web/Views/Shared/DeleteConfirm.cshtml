@@ -1,0 +1,43 @@
+@model DeleteConfirmViewModel
+@*
+    Tüm modüller için ortak silme onay sayfası. Form, bulunulan controller'ın
+    "Delete" (POST) action'ına gönderilir; anti-forgery token otomatik eklenir.
+*@
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card pv-card">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="pv-icon pv-icon-peach"><i class="bi bi-trash"></i></div>
+                    <h1 class="h4 mb-0">@Model.Title</h1>
+                </div>
+                <p>@Model.Question</p>
+
+                @if (Model.Details.Count > 0)
+                {
+                    <dl class="row small mb-3">
+                        @foreach (var item in Model.Details)
+                        {
+                            <dt class="col-sm-4 text-body-secondary">@item.Key</dt>
+                            <dd class="col-sm-8">@item.Value</dd>
+                        }
+                    </dl>
+                }
+
+                @if (Model.Note is not null)
+                {
+                    <div class="alert alert-warning small"><i class="bi bi-shield-check me-1"></i>@Model.Note</div>
+                }
+
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-flex gap-2">
+                    <button type="submit" class="btn btn-danger rounded-pill px-4"><i class="bi bi-trash me-1"></i>Evet, sil</button>
+                    <a href="@Model.CancelUrl" class="btn btn-light rounded-pill px-4">Vazgeç</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

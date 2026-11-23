@@ -1,0 +1,55 @@
+@model ExaminationNoteSaveDto
+@{
+    var a = (AppointmentDto)ViewData["Appointment"]!;
+    ViewData["Title"] = "Muayene notu";
+}
+
+<a asp-action="Details" asp-route-id="@a.Id" class="small text-decoration-none"><i class="bi bi-arrow-left"></i> Randevu detayı</a>
+<h1 class="h3 mt-1 mb-1">Muayene notu ve randevuyu tamamla</h1>
+<p class="text-body-secondary mb-4">
+    <strong>@a.PetName</strong> (@DisplayText.Species(a.Species)) · @a.ServiceName · @a.AppointmentDate.ToString("dd.MM.yyyy HH:mm") · sahibi @a.OwnerName
+</p>
+
+@if (!string.IsNullOrWhiteSpace(a.OwnerNote))
+{
+    <div class="alert alert-info"><i class="bi bi-chat-left-text me-1"></i><strong>Sahibin notu:</strong> @a.OwnerNote</div>
+}
+
+<div class="row">
+    <div class="col-xl-8">
+        <div class="card pv-card">
+            <div class="card-body">
+                <form asp-action="Complete" asp-route-id="@a.Id" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                    <div class="mb-3">
+                        <label asp-for="Diagnosis" class="form-label"></label>
+                        <input asp-for="Diagnosis" class="form-control" placeholder="Örn: Hafif gastroenterit" />
+                        <span asp-validation-for="Diagnosis" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Treatment" class="form-label"></label>
+                        <textarea asp-for="Treatment" class="form-control" rows="4" placeholder="Uygulanan tedavi, reçete, kullanım talimatı"></textarea>
+                        <span asp-validation-for="Treatment" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Notes" class="form-label"></label>
+                        <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Kontrol tarihi, sahibine öneriler"></textarea>
+                        <span asp-validation-for="Notes" class="text-danger small"></span>
+                    </div>
+                    <div class="alert alert-light border small mb-4">
+                        <i class="bi bi-info-circle me-1"></i>Kaydettiğinizde randevunun durumu <strong>Tamamlandı</strong> olur ve hizmet ücreti
+                        (@a.Price.ToString("C2")) ciro raporuna eklenir.
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary rounded-pill px-4"><i class="bi bi-clipboard2-check me-1"></i>Kaydet ve tamamla</button>
+                        <a asp-action="Details" asp-route-id="@a.Id" class="btn btn-light rounded-pill px-4">Vazgeç</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

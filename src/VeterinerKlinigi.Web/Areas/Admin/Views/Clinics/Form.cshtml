@@ -1,0 +1,70 @@
+@model ClinicSaveDto
+@{
+    var id = ViewData["Id"] as int?;
+}
+
+<a asp-action="Index" class="small text-decoration-none"><i class="bi bi-arrow-left"></i> Klinikler</a>
+<h1 class="h3 mt-1 mb-4">@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-xl-8">
+        <div class="card pv-card">
+            <div class="card-body">
+                <form asp-action="@(id is null ? "Create" : "Edit")" asp-route-id="@id" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label asp-for="Name" class="form-label"></label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Address" class="form-label"></label>
+                            <input asp-for="Address" class="form-control" />
+                            <span asp-validation-for="Address" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Phone" class="form-label"></label>
+                            <input asp-for="Phone" class="form-control" />
+                            <span asp-validation-for="Phone" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="OpeningTime" class="form-label"></label>
+                            <input asp-for="OpeningTime" class="form-control" step="900" />
+                            <span asp-validation-for="OpeningTime" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="ClosingTime" class="form-label"></label>
+                            <input asp-for="ClosingTime" class="form-control" step="900" />
+                            <span asp-validation-for="ClosingTime" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Description" class="form-label"></label>
+                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check form-switch">
+                                <input asp-for="IsActive" class="form-check-input" role="switch" />
+                                <label asp-for="IsActive" class="form-check-label"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary rounded-pill px-4"><i class="bi bi-check-lg me-1"></i>Kaydet</button>
+                        <a asp-action="Index" class="btn btn-light rounded-pill px-4">Vazgeç</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

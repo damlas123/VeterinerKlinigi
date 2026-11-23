@@ -1,0 +1,65 @@
+@model List<UserListItemDto>
+@{
+    ViewData["Title"] = "Kullanıcılar";
+    var role = ViewData["Role"] as string;
+    var search = ViewData["Search"] as string;
+    var roles = new[] { (RoleNames.Member, "Üyeler"), (RoleNames.Veterinarian, "Veterinerler"), (RoleNames.Admin, "Yöneticiler") };
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+        <h1 class="h3 mb-1">Kullanıcılar</h1>
+        <p class="text-body-secondary mb-0">Hayvan sahipleri (üyeler), veterinerler ve yöneticiler</p>
+    </div>
+    <form method="get" class="d-flex gap-2">
+        <select name="role" class="form-select" onchange="this.form.submit()">
+            <option value="">Tüm roller</option>
+            @foreach (var (value, text) in roles)
+            {
+                <option value="@value" selected="@(value == role)">@text</option>
+            }
+        </select>
+        <input type="search" name="search" value="@search" class="form-control" placeholder="Ad, e-posta, telefon" />
+        <button class="btn btn-outline-primary rounded-pill" type="submit"><i class="bi bi-search"></i></button>
+    </form>
+</div>
+
+<div class="card pv-card">
+    <div class="card-body">
+        @if (Model.Count == 0)
+        {
+            <div class="pv-empty"><i class="bi bi-people"></i><p class="mb-0">Kullanıcı bulunamadı.</p></div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table pv-table align-middle mb-0">
+                    <thead><tr><th>Kullanıcı</th><th>Telefon</th><th>Rol</th><th class="text-center">Hayvan</th><th class="text-center">Randevu</th><th>Kayıt</th><th>Durum</th><th></th></tr></thead>
+                    <tbody>
+                        @foreach (var u in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="pv-avatar">@DisplayText.Initial(u.FullName)</span>
+                                        <div>
+                                            <a asp-action="Details" asp-route-id="@u.Id" class="fw-semibold text-decoration-none">@u.FullName</a>
+                                            <div class="small text-body-secondary">@u.Email</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>@(u.PhoneNumber ?? "-")</td>
+                                <td>@foreach (var r in u.Roles) { <span class="badge pv-badge me-1">@r</span> }</td>
+                                <td class="text-center">@u.PetCount</td>
+                                <td class="text-center">@u.AppointmentCount</td>
+                                <td class="small">@u.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                <td>@if (u.IsLockedOut) { <span class="badge pv-status-rejected"><i class="bi bi-lock me-1"></i>Kilitli</span> } else { <span class="badge pv-status-approved">Aktif</span> }</td>
+                                <td class="text-end"><a asp-action="Details" asp-route-id="@u.Id" class="btn btn-sm btn-light rounded-pill"><i class="bi bi-eye"></i></a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

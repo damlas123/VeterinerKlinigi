@@ -1,0 +1,123 @@
+@model PetDetailDto
+@*
+    Evcil hayvanın sağlık geçmişi — üç panelde ortak görünüm:
+    Üye (kendi hayvanı), Veteriner (hastası), Admin (tüm hayvanlar).
+*@
+@{
+    var p = Model.Pet;
+    var area = ViewContext.RouteData.Values["area"] as string;
+    ViewData["Title"] = p.Name;
+    var today = DateOnly.FromDateTime(DateTime.Today);
+    var overdue = Model.Vaccinations.Count(v => v.DueState == VaccinationDueState.Overdue);
+    var upcoming = Model.Vaccinations.Count(v => v.DueState == VaccinationDueState.Upcoming);
+}
+
+<a asp-action="Index" class="small text-decoration-none"><i class="bi bi-arrow-left"></i> Listeye dön</a>
+
+<div class="card pv-card mt-2 mb-4">
+    <div class="card-body d-flex flex-wrap align-items-center gap-4">
+        @if (p.PhotoUrl is not null)
+        {
+            <img src="@p.PhotoUrl" alt="@p.Name" class="pv-pet-photo-lg" />
+        }
+        else
+        {
+            <div class="pv-pet-photo-lg pv-pet-placeholder"><i class="bi bi-heart"></i></div>
+        }
+        <div class="flex-grow-1">
+            <h1 class="h3 mb-1">
+                @p.Name
+                @if (!p.IsActive) { <span class="badge text-bg-secondary align-middle fs-6">Arşivlendi</span> }
+            </h1>
+            <div class="text-body-secondary mb-2">@p.SpeciesName · @(p.Breed ?? "Irk belirtilmemiş") · @DisplayText.Age(p.BirthDate, today) · @p.Weight.ToString("0.##") kg</div>
+            <div class="small">
+                <i class="bi bi-calendar-heart me-1"></i>Doğum: @p.BirthDate.ToString("dd.MM.yyyy")
+                @if (area != "Member")
+                {
+                    <span class="ms-3"><i class="bi bi-person me-1"></i>Sahibi: @p.OwnerName (@Model.OwnerEmail@(Model.OwnerPhone is null ? "" : ", " + Model.OwnerPhone))</span>
+                }
+            </div>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            @if (area == "Member" && Model.CanEdit)
+            {
+                <a asp-controller="Appointments" asp-action="Create" asp-route-petId="@p.Id" class="btn btn-primary rounded-pill"><i class="bi bi-calendar-plus me-1"></i>Randevu al</a>
+                <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-outline-primary rounded-pill"><i class="bi bi-pencil me-1"></i>Düzenle</a>
+                <a asp-action="Delete" asp-route-id="@p.Id" class="btn btn-outline-danger rounded-pill"><i class="bi bi-trash me-1"></i>Sil</a>
+            }
+            @if (area is "Admin" or "Veterinarian" && Model.CanManageVaccinations && p.IsActive)
+            {
+                <a asp-controller="Vaccinations" asp-action="Create" asp-route-petId="@p.Id" class="btn btn-primary rounded-pill"><i class="bi bi-plus-lg me-1"></i>Aşı kaydı ekle</a>
+            }
+            @if (area == "Admin" && p.IsActive)
+            {
+                <a asp-action="Delete" asp-route-id="@p.Id" class="btn btn-outline-danger rounded-pill"><i class="bi bi-trash me-1"></i>Sil / arşivle</a>
+            }
+        </div>
+    </div>
+</div>
+
+@if (overdue > 0)
+{
+    <div class="alert alert-danger d-flex align-items-center gap-2"><i class="bi bi-exclamation-octagon"></i>@overdue aşının tarihi geçti. Lütfen veterinerinize danışın.</div>
+}
+else if (upcoming > 0)
+{
+    <div class="alert alert-warning d-flex align-items-center gap-2"><i class="bi bi-bell"></i>Önümüzdeki 30 gün içinde @upcoming aşı zamanı var.</div>
+}
+
+<ul class="nav nav-pills pv-tabs mb-3" role="tablist">
+    <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-vaccines" type="button"><i class="bi bi-capsule me-1"></i>Aşılar (@Model.Vaccinations.Count)</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-notes" type="button"><i class="bi bi-journal-medical me-1"></i>Muayene geçmişi (@Model.ExaminationNotes.Count)</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-appointments" type="button"><i class="bi bi-calendar2-week me-1"></i>Randevular (@Model.Appointments.Count)</button></li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade show active" id="tab-vaccines">
+        <div class="card pv-card"><div class="card-body">
+            @{ ViewData["CanManage"] = area is "Admin" or "Veterinarian" && Model.CanManageVaccinations; }
+            <partial name="_VaccinationTable" model="Model.Vaccinations" view-data="ViewData" />
+        </div></div>
+    </div>
+
+    <div class="tab-pane fade" id="tab-notes">
+        @if (Model.ExaminationNotes.Count == 0)
+        {
+            <div class="card pv-card"><div class="card-body pv-empty py-4"><i class="bi bi-journal"></i><p class="mb-0">Henüz muayene notu yok.</p></div></div>
+        }
+        else
+        {
+            <div class="pv-timeline">
+                @foreach (var note in Model.ExaminationNotes)
+                {
+                    <div class="pv-timeline-item">
+                        <div class="card pv-card">
+                            <div class="card-body">
+                                <div class="d-flex flex-wrap justify-content-between gap-2 mb-2">
+                                    <strong>@note.ServiceName</strong>
+                                    <span class="small text-body-secondary">@note.AppointmentDate.ToString("dd.MM.yyyy HH:mm") · @note.VeterinarianName</span>
+                                </div>
+                                <div><span class="pv-label">Tanı:</span> @note.Diagnosis</div>
+                                <div><span class="pv-label">Tedavi:</span> @note.Treatment</div>
+                                @if (!string.IsNullOrWhiteSpace(note.Notes))
+                                {
+                                    <div class="small text-body-secondary mt-1">@note.Notes</div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="tab-pane fade" id="tab-appointments">
+        <div class="card pv-card"><div class="card-body">
+            @{
+                ViewData["ShowOwner"] = false;
+                ViewData["ShowVet"] = true;
+            }
+            <partial name="_AppointmentTable" model="Model.Appointments" view-data="ViewData" />
+        </div></div>
+    </div>
+</div>

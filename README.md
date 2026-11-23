@@ -5,109 +5,228 @@
 | **Öğrenci Numarası** | b241210351 |
 | **Adı Soyadı** | Damla Söylemez |
 | **Ders Grubu** | 1B |
-| **Ders** | Web Programlama — 2026-2027 Güz Dönemi |
+| **Ders** | Web Programlama — Sakarya Üniversitesi |
 | **GitHub** | https://github.com/damlas123/VeterinerKlinigi |
-
----
 
 ## Proje hakkında
 
-PatiVet, ASP.NET Core MVC (.NET 10) ile geliştirilen bir **veteriner kliniği randevu ve hasta takip sistemidir**.
+PatiVet; hayvan sahiplerinin (üyeler) evcil hayvanlarını kaydedip **veteriner, hizmet, tarih ve saat** seçerek randevu aldığı,
+veterinerlerin randevuları onaylayıp **muayene notu ve aşı kaydı** girdiği, yöneticinin ise **klinik, hizmet, veteriner, kullanıcı
+ve ciro raporlarını** yönettiği bir ASP.NET Core MVC uygulamasıdır.
 
-- Klinikler; **hizmetlerini** (muayene, aşı, kısırlaştırma, diş temizliği, tıraş ve bakım…) süre ve ücretleriyle tanımlar.
-- **Veteriner hekimler** uzmanlık alanları, verebildikleri hizmetler ve **müsaitlik saatleri** ile sisteme eklenir.
-- **Hayvan sahipleri** üye olur, birden fazla evcil hayvan kaydeder, **aşı geçmişini** takip eder ve uygun saatlere **randevu** alır.
-- Randevular *Bekliyor* durumunda oluşur; **Admin veya ilgili veteriner** onaylar ya da reddeder. Sistem, **hizmet süresini dikkate alarak çakışan randevuları engeller.**
-- Tamamlanan randevular için veteriner **muayene notu** girer.
-- Veriler bir **REST API** üzerinden de sunulur (DTO, LINQ, ciro raporu).
-- Uygulama bir **MCP (Model Context Protocol) sunucusu** içerir; böylece bir yapay zekâ asistanına *"Pamuk'un bir sonraki aşısı ne zaman?"* diye sorulduğunda asistan cevabı doğrudan bu uygulamadan alır.
+Aynı iş kuralları üç farklı kanaldan kullanılır ve **tek bir yerde (Business katmanı)** yazılmıştır:
+
+```text
+  MVC sayfaları (Web)   ─┐
+  REST API (/api/...)   ─┼──►  Business katmanı (I*Service → *Manager)  ──►  Data (EF Core)  ──►  SQL Server
+  MCP araçları (/mcp)   ─┘     iş kuralları, sahiplik kontrolleri, çakışma kontrolü
+```
 
 ## Kullanılan teknolojiler
 
 | Alan | Teknoloji |
 |---|---|
-| Platform | .NET 10 (LTS), C# |
-| Web | ASP.NET Core MVC, Razor, Areas |
-| Veri erişimi | Entity Framework Core 10 (Code First, Migration), LINQ |
-| Veritabanı | SQL Server (LocalDB) |
-| Kimlik / yetki | ASP.NET Core Identity, rol bazlı + kaynak bazlı yetkilendirme, JWT |
-| API | RESTful API, DTO, ProblemDetails |
-| Yapay zekâ entegrasyonu | ModelContextProtocol.AspNetCore (resmî MCP C# SDK) |
-| Arayüz | Bootstrap 5, Bootstrap Icons, HTML5, CSS3, JavaScript, jQuery, Chart.js |
+| Çatı | ASP.NET Core MVC **.NET 10**, C# |
+| Veri | Entity Framework Core 10 (Code First, Fluent API, migration), SQL Server / LocalDB, LINQ |
+| Kimlik | ASP.NET Core Identity (çerez) + JWT Bearer (API ve MCP) |
+| API | REST, DTO, ProblemDetails, OpenAPI dokümanı (`/openapi/v1.json`, geliştirme ortamında) |
+| MCP | `ModelContextProtocol.AspNetCore` 2.4.0 (resmî C# SDK), HTTP transport, `/mcp` |
+| Arayüz | Bootstrap 5, Bootstrap Icons, jQuery, jQuery Validation (unobtrusive), Chart.js |
+| Mimari | Katmanlı mimari, Dependency Injection, Repository + Unit of Work, Central Package Management |
 
 ## Proje yapısı
 
-Proje 5 katmandan oluşur. Oklar bağımlılık yönünü gösterir; iş kuralları sadece **Business** katmanında yazılır ve MVC, REST API ve MCP bu katmanı ortak kullanır.
-
 ```text
-VeterinerKlinigi.Web ──► VeterinerKlinigi.API ──► VeterinerKlinigi.Business ──► VeterinerKlinigi.Data ──► VeterinerKlinigi.Entities
- (MVC, Area'lar, MCP)      (REST controller'lar)     (servisler, DTO, kurallar)    (DbContext, migration)    (entity, enum)
+VeterinerKlinigi.slnx
+├── src/VeterinerKlinigi.Entities   → Entity sınıfları, enum'lar, sabitler (RoleNames, FieldLengths)
+├── src/VeterinerKlinigi.Data       → AppDbContext, Fluent API ayarları, Migrations, Repository/UnitOfWork, Seed
+├── src/VeterinerKlinigi.Business   → Abstract (I*Service), Concrete (*Manager), Dtos, Rules, Security (AccessScopes)
+├── src/VeterinerKlinigi.API        → REST controller'ları, JWT üretimi, yetkilendirme politikaları
+└── src/VeterinerKlinigi.Web        → Çalışan proje: MVC, Areas (Admin/Veterinarian/Member), MCP araçları, Program.cs
 ```
 
-Ayrıntılı mimari ve ER diyagramı: [docs/01-gereksinim-analizi-ve-mimari.md](docs/01-gereksinim-analizi-ve-mimari.md)
+Katman bağımlılıkları tek yönlüdür: `Web → API → Business → Data → Entities`. Ayrıntı: [docs/01](docs/01-gereksinim-analizi-ve-mimari.md), [docs/02](docs/02-solution-ve-proje-yapisi.md), [docs/03](docs/03-entity-ve-dbcontext.md).
 
-## Kurulum (geliştirme ortamı)
+### Veritabanı (ER özeti)
 
-**Gereksinimler:** Visual Studio 2026 (ASP.NET and web development iş yükü) veya .NET 10 SDK, SQL Server LocalDB.
-
-```powershell
-git clone https://github.com/damlas123/VeterinerKlinigi.git
-cd VeterinerKlinigi
-dotnet restore
-dotnet run --project src/VeterinerKlinigi.Web --launch-profile https
+```mermaid
+erDiagram
+    AspNetUsers ||--o{ Pets : "sahibi"
+    AspNetUsers ||--o| Veterinarians : "hesabı"
+    Clinics ||--o{ Veterinarians : ""
+    Clinics ||--o{ Services : ""
+    Veterinarians ||--o{ VeterinarianServices : ""
+    Services ||--o{ VeterinarianServices : ""
+    Veterinarians ||--o{ VeterinarianAvailabilities : "haftalık saatler"
+    Pets ||--o{ Appointments : ""
+    Veterinarians ||--o{ Appointments : ""
+    Services ||--o{ Appointments : ""
+    Appointments ||--o| ExaminationNotes : "muayene notu"
+    Pets ||--o{ Vaccinations : ""
+    Veterinarians |o--o{ Vaccinations : "uygulayan"
 ```
 
-### Veritabanı
+## Kurulum
 
-Bağlantı dizesi `src/VeterinerKlinigi.Web/appsettings.json` içindedir (varsayılan: SQL Server LocalDB, Windows kimlik doğrulaması, parola yok). Veritabanını oluşturmak için:
+**Gereksinimler:** Visual Studio 2026 (ASP.NET ve web geliştirme iş yükü) veya .NET 10 SDK, SQL Server LocalDB (Visual Studio ile gelir).
 
-```powershell
-# Visual Studio > Package Manager Console (Default project: VeterinerKlinigi.Data)
-Update-Database -Project VeterinerKlinigi.Data -StartupProject VeterinerKlinigi.Web
+1. Depoyu klonlayın ve `VeterinerKlinigi.slnx` dosyasını açın. Başlangıç projesi: **VeterinerKlinigi.Web**.
+2. (Önerilir) Kalıcı bir JWT anahtarı tanımlayın. Anahtar **depoya konmaz**, Windows kullanıcı profilindeki user-secrets'ta saklanır:
+   ```powershell
+   dotnet user-secrets set "Jwt:Key" "en-az-32-karakterlik-gizli-bir-anahtar-yazin-123" --project src/VeterinerKlinigi.Web
+   ```
+   Tanımlanmazsa uygulama her açılışta geçici bir anahtar üretir (uyarı loglanır; yeniden başlatınca eski token'lar geçersiz olur).
+3. **F5** ile çalıştırın. İlk açılışta uygulama kendiliğinden:
+   - bekleyen migration'ları uygular (`VeterinerKlinigiDb` veritabanını oluşturur),
+   - rolleri (Admin, Veteriner, Uye) ve admin hesabını ekler,
+   - örnek verileri (2 klinik, hizmetler, 4 veteriner, 2 üye, evcil hayvanlar, randevular, aşılar) ekler.
+4. Adres: `https://localhost:7080` (veya `http://localhost:5080`).
 
-# veya terminal
-dotnet tool install --global dotnet-ef --version 10.0.15
-dotnet ef database update --project src/VeterinerKlinigi.Data --startup-project src/VeterinerKlinigi.Web
-```
+Farklı bir SQL Server kullanılacaksa bağlantı dizesi de user-secrets ile verilebilir:
+`dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=...;Database=VeterinerKlinigiDb;Trusted_Connection=True;TrustServerCertificate=True" --project src/VeterinerKlinigi.Web`
 
-Farklı bir SQL Server kullanıyorsanız `appsettings.json`'ı değiştirmeden kendi bağlantı dizenizi user-secrets ile tanımlayın:
+Migration'ı elle uygulamak isterseniz: Package Manager Console → Default project **VeterinerKlinigi.Data** → `Update-Database`.
 
-```powershell
-dotnet user-secrets set "ConnectionStrings:DefaultConnection" "<bağlantı dizeniz>" --project src/VeterinerKlinigi.Web
-```
+## Demo hesapları
 
-Uygulama: <https://localhost:7080> · API durum ucu: <https://localhost:7080/api/system/status>
+| Rol | E-posta | Parola |
+|---|---|---|
+| Admin | `b241210351@sakarya.edu.tr` | `sau` |
+| Veteriner | `ayse.yilmaz@pativet.test` · `mehmet.demir@pativet.test` · `zeynep.kaya@pativet.test` · `can.ozturk@pativet.test` | `Demo123!` |
+| Üye | `uye@pativet.test` (Pamuk, Karabaş) · `uye2@pativet.test` (Maviş, Tarçın) | `Demo123!` |
 
-> Örnek hesap bilgileri Gün 4'te eklenecektir.
+> Admin parolası ödev gereği `sau`'dur; kayıt formundaki parola kuralları (en az 8 karakter, büyük/küçük harf, rakam) yalnızca yeni kayıtlar için geçerlidir.
 
-## Roller
+## Roller ve ekranlar
 
-| Rol | Özet |
+| Rol | Yapabildikleri |
 |---|---|
-| **Admin** | Klinik, hizmet, veteriner ve kullanıcı yönetimi; tüm randevular; raporlar |
-| **Veteriner** | Kendi randevularını onaylar/reddeder, muayene notu ve aşı kaydı girer, müsaitlik saatlerini yönetir |
-| **Üye** | Evcil hayvan ekler, aşı takvimini görür, randevu alır ve takip eder |
+| **Ziyaretçi** | Ana sayfa, hizmetler, veteriner listesi/detayı, hakkında, iletişim, kayıt ol, giriş |
+| **Üye** | Dashboard (yaklaşan randevu, aşı hatırlatma), evcil hayvan CRUD (fotoğraf yükleme), randevu sihirbazı (uygun saatler canlı gelir), randevu düzenleme/iptal, aşı takvimi, sağlık geçmişi |
+| **Veteriner** | Dashboard (bugünkü program, 7 günlük grafik), randevu onay/ret, muayene notu girip randevuyu tamamlama, hastalar, aşı kaydı ekle/düzenle/sil, haftalık müsaitlik saatleri |
+| **Admin** | Dashboard (istatistik kartları + grafikler), klinik/hizmet/veteriner CRUD, veteriner müsaitlikleri, kullanıcılar (kilitle/aç), tüm hayvanlar ve randevular (filtreli), ciro raporu |
 
-## Dokümanlar
+**Sahiplik kontrolü:** Bir üye başka üyenin hayvanını/randevusunu, bir veteriner başkasının hastasını URL'deki id'yi değiştirerek göremez.
+Bütün sorgular `AccessScopes` filtrelerinden geçer; erişimi olmayan kayıt için **404** döner (kaydın varlığı bile sızdırılmaz).
 
-| Doküman | İçerik |
+## Randevu kuralları (AppointmentManager)
+
+| Kural | Açıklama |
 |---|---|
-| [Aşama 1 — Gereksinim analizi ve mimari](docs/01-gereksinim-analizi-ve-mimari.md) | Gereksinimler, yetki matrisi, **ER diyagramı**, iş kuralları, katmanlı mimari, API ve MCP tasarımı |
-| [Aşama 2 — Solution ve proje yapısı](docs/02-solution-ve-proje-yapisi.md) | 5 proje, referanslar, paket yönetimi, Program.cs, tema |
-| [Aşama 3–4 — Entity'ler, DbContext ve migration](docs/03-entity-ve-dbcontext.md) | Entity sınıfları, ilişkiler, silme davranışları, CHECK kısıtları, index'ler |
-| [10 günlük geliştirme planı](docs/gelistirme-plani.md) | Gün gün yapılacaklar ve commit mesajları |
+| Geçmiş tarih | Geçmiş bir zamana randevu alınamaz; en fazla 60 gün ileriye alınabilir. |
+| Saat aralığı | Başlangıç saatleri 15 dakikalık aralıklara oturur (09:00, 09:15 ...). |
+| Bitiş saati | `Bitiş = Başlangıç + hizmet süresi`; süre ve ücret randevuya kopyalanır (hizmet sonradan değişse de geçmiş bozulmaz). |
+| Müsaitlik | Randevu, hekimin o günkü müsaitlik aralığının **ve** kliniğin çalışma saatlerinin tamamen içinde olmalıdır. |
+| Hizmet–hekim | Hekim seçilen hizmeti verebiliyor olmalıdır; pasif hekim/hizmet/hayvan için randevu alınamaz. |
+| **Çakışma** | Aynı hekimin `Bekliyor`/`Onaylandı` randevularıyla **zaman aralığı** kesişemez: `yeniBaşlangıç < mevcutBitiş && mevcutBaşlangıç < yeniBitiş`. Örn. 10:00–10:30 varken 10:15 reddedilir, 10:30 kabul edilir. |
+| Hayvan çakışması | Aynı hayvanın aynı saatte iki randevusu olamaz. |
+| Eşzamanlılık | Kontrol + kayıt **Serializable** transaction içinde yapılır; iki kişi aynı anda aynı saate basarsa biri reddedilir. |
+| Durum akışı | `Bekliyor → Onaylandı / Reddedildi (gerekçe zorunlu) / İptal`, `Onaylandı → Tamamlandı (muayene notuyla) / İptal`. Saati geçmiş randevu iptal edilemez. |
 
-## Geliştirme durumu
+## REST API
 
-- [x] **Gün 1 —** Gereksinim analizi, ER diyagramı ve mimari tasarım
-- [x] **Gün 2 —** Solution ve katmanlı proje yapısı
-- [x] **Gün 3 —** Entity sınıfları, DbContext ve ilk migration
-- [ ] **Gün 4 —** Identity, roller ve hesap sayfaları
-- [ ] **Gün 5 —** Repository ve servis katmanı
-- [ ] **Gün 6 —** CRUD modülleri
-- [ ] **Gün 7 —** Randevu sistemi ve çakışma kontrolü
-- [ ] **Gün 8 —** REST API
-- [ ] **Gün 9 —** MCP sunucusu
-- [ ] **Gün 10 —** Dashboard'lar, testler ve final rapor
+Tüm uçlar JSON döner; hatalar **ProblemDetails** biçimindedir (`400` doğrulama, `401` giriş yok, `403` yetki yok, `404` bulunamadı/erişim yok, `409` çakışma).
 
-> API örnekleri, MCP Inspector testi ve ekran görüntüleri proje ilerledikçe bu dosyaya eklenecektir.
+| Metot | Uç | Yetki | Açıklama |
+|---|---|---|---|
+| POST | `/api/auth/token` | Herkes | E-posta + parola → JWT |
+| GET | `/api/auth/me` | Giriş | Token sahibinin bilgileri |
+| GET | `/api/clinics`, `/api/clinics/{id}` | Herkes | Klinikler |
+| GET | `/api/services?clinicId=` , `/api/services/{id}` | Herkes | Hizmetler |
+| GET | `/api/veterinarians?clinicId=&serviceId=&specialty=`, `/{id}` | Herkes | Veterinerler (+ müsaitlik) |
+| GET | `/api/pets`, `/api/pets/{id}`, `/api/pets/{id}/vaccinations` | Giriş | Rolüne göre görebildiği hayvanlar, aşı takvimi |
+| GET | `/api/appointments?status=&from=&to=&veterinarianId=&petId=` | Giriş | Rolüne göre randevular |
+| GET | `/api/appointments/{id}` | Giriş | Randevu detayı |
+| GET | `/api/appointments/available-slots?serviceId=&date=&veterinarianId=` | Giriş | Uygun saatler |
+| POST | `/api/appointments` | JWT (Üye/Admin) | Randevu oluştur → `201 Created` |
+| POST | `/api/appointments/{id}/approve` · `/reject` · `/cancel` | JWT | Durum değişiklikleri |
+| GET | `/api/reports/revenue?from=&to=&clinicId=` | Admin | **LINQ ile hizmet bazında ciro raporu** |
+| GET | `/api/reports/dashboard` | Admin | Dashboard grafik verileri |
+| GET | `/api/system/status` | Herkes | Uygulama ve veritabanı durumu |
+
+Okuma uçları tarayıcıdaki oturum çereziyle de çalışır (sayfalardaki grafikler ve randevu sihirbazı bu sayede API'yi kullanır).
+**Veri değiştiren uçlar yalnızca JWT kabul eder** — böylece başka bir sitenin, kullanıcının çerezini kullanarak istek atması (CSRF) mümkün olmaz.
+
+**Örnek — token al ve randevu oluştur:**
+
+```http
+POST /api/auth/token
+Content-Type: application/json
+
+{ "email": "uye@pativet.test", "password": "Demo123!" }
+```
+```json
+{ "accessToken": "eyJhbGciOi...", "tokenType": "Bearer", "expiresAt": "2026-11-25T12:00:00+00:00", "email": "uye@pativet.test", "roles": ["Uye"] }
+```
+```http
+POST /api/appointments
+Authorization: Bearer eyJhbGciOi...
+Content-Type: application/json
+
+{ "petId": 1, "serviceId": 1, "veterinarianId": 1, "appointmentDate": "2026-11-26T10:00:00", "ownerNote": "İştahsızlık" }
+```
+Çakışma olursa:
+```json
+{ "status": 409, "title": "Çakışma", "detail": "Seçilen saat dolu: Vet. Hek. Ayşe Yılmaz hekiminin 10:00-10:30 arasında başka bir randevusu var. 'Genel Muayene' 30 dakika sürdüğü için 10:15-10:45 aralığı bu randevuyla çakışıyor." }
+```
+
+Hazır istek örnekleri: [`src/VeterinerKlinigi.Web/VeterinerKlinigi.Web.http`](src/VeterinerKlinigi.Web/VeterinerKlinigi.Web.http) (Visual Studio'da dosyayı açıp "Send request" ile çalıştırılır; Postman ile de aynı istekler atılabilir).
+
+## MCP sunucusu (Model Context Protocol)
+
+Uygulama `/mcp` adresinde bir MCP sunucusu yayınlar. Yapay zekâ asistanları (Claude Desktop, VS Code, MCP Inspector) bu araçları çağırabilir.
+Araçlar REST API ile **aynı servisleri** (`IAppointmentService`, `IVaccinationService` ...) kullanır; kural ve sahiplik kontrolleri aynıdır.
+
+| Araç | Açıklama |
+|---|---|
+| `uygun_saatler` | Hizmet ve tarih için boş hekim/saatleri listeler |
+| `asi_takvimi` | Hayvan adı veya id'sine göre aşı geçmişi, yaklaşan ve geciken dozlar |
+| `randevu_olustur` | Randevu talebi oluşturur (çakışma kontrolüyle) |
+| `hayvanlarim` | Kullanıcının evcil hayvanları |
+| `hizmet_listesi` | Hizmetler (id, süre, ücret) |
+| `randevularim` | Kullanıcının randevuları (durum filtresiyle) |
+
+**MCP Inspector ile test:**
+
+1. Uygulamayı çalıştırın; giriş yapıp **Profil menüsü → API / MCP** sayfasından token alın (veya `POST /api/auth/token`).
+2. Terminal: `npx @modelcontextprotocol/inspector`
+3. Inspector'da: Transport **Streamable HTTP**, URL `http://localhost:5080/mcp`,
+   Authentication → Header `Authorization`, değer `Bearer <token>` → **Connect**.
+4. **Tools → List Tools** ile altı aracı görün; örn. `hizmet_listesi`, ardından `uygun_saatler` (`serviceId=1`, `date=2026-11-26`) ve `randevu_olustur`'u çalıştırın.
+   Oluşan randevu, web sitesinde üye panelinde ve veteriner panelinde **Bekliyor** olarak görünür.
+
+Token olmadan `/mcp` çağrılırsa **401** döner.
+
+## Güvenlik ve doğrulama
+
+- Parolalar Identity ile hash'lenir; 5 hatalı girişte hesap 5 dakika kilitlenir; admin hesapları kilitleyebilir.
+- Tüm formlarda **anti-forgery token** (CSRF) otomatik doğrulanır; çerez `HttpOnly` + `SameSite=Lax`.
+- Doğrulama hem istemcide (jQuery Validation, Türkçe ondalık desteği) hem sunucuda (DataAnnotations + iş kuralları) yapılır.
+- Fotoğraf yükleme: yalnızca JPG/PNG/WEBP, en fazla 2 MB, dosya imzası (magic bytes) kontrolü, rastgele (GUID) dosya adı.
+- Razor çıktıları otomatik HTML-encode edilir (XSS); jQuery ile eklenen metinlerde `.text()` kullanılır.
+- Güvenlik başlıkları: `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`; üretimde HSTS.
+- JWT anahtarı ve özel bağlantı dizeleri depoda tutulmaz (user-secrets).
+
+## Test senaryoları
+
+| # | Senaryo | Beklenen |
+|---|---|---|
+| 1 | `uye@pativet.test` ile giriş → Yeni randevu → Pamuk, Genel Muayene, yarın | Hekimlerin boş saatleri listelenir |
+| 2 | Aynı hekim/saat için ikinci üyeyle (`uye2@`) randevu almayı dene | Saat listede görünmez; API'den denenirse **409** |
+| 3 | 10:00–10:30 randevusu varken 10:15'e randevu (API) | **409 Çakışma**; 10:30 başarılı |
+| 4 | Üye olarak `/Member/Pets/Details/{başkasının id'si}` | **404** sayfası |
+| 5 | Veteriner olarak bekleyen randevuyu onayla → "Muayeneyi tamamla" | Durum **Tamamlandı**, ciro raporuna eklenir |
+| 6 | Admin → Raporlar | Hizmet bazında ciro tablosu ve grafik |
+| 7 | Token olmadan `POST /api/appointments` | **401** |
+| 8 | MCP Inspector → `randevu_olustur` | Randevu oluşur, web panelinde görünür |
+| 9 | Kayıt formunda zayıf parola / geçersiz e-posta | Türkçe doğrulama mesajları |
+| 10 | Admin → veteriner sil (randevu geçmişi olan) | Silinmez, pasif yapılır |
+
+## Ekran görüntüleri
+
+Ekran görüntüleri `docs/ekran-goruntuleri/` klasörüne eklenecektir: ana sayfa, giriş, üye dashboard, randevu sihirbazı,
+veteriner dashboard, muayene notu, admin dashboard, ciro raporu, MCP Inspector.
+
+## Geliştirme süreci
+
+Proje aşamalar hâlinde geliştirildi; plan ve gün gün yapılanlar: [docs/gelistirme-plani.md](docs/gelistirme-plani.md).

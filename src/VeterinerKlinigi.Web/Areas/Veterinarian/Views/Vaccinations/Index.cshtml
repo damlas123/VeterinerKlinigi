@@ -1,0 +1,11 @@
+@model List<VaccinationScheduleDto>
+@{
+    ViewData["Title"] = "Aşı kayıtları";
+}
+
+<div class="mb-4">
+    <h1 class="h3 mb-1">Aşı kayıtları</h1>
+    <p class="text-body-secondary mb-0">Hastalarınızın aşı geçmişi ve takvimi. Yeni aşı kaydını hastanın sayfasından ekleyin.</p>
+</div>
+
+<partial name="_VaccinationSchedules" model="Model" />

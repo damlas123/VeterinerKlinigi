@@ -1,0 +1,21 @@
+@model StatusCodeViewModel
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card pv-card text-center">
+                <div class="card-body p-5">
+                    <div class="display-3 fw-bold text-primary mb-2">@Model.Code</div>
+                    <h1 class="h3 mb-3">@Model.Title</h1>
+                    <p class="text-body-secondary mb-4">@Model.Message</p>
+                    <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-primary rounded-pill px-4">
+                        <i class="bi bi-house-heart me-2"></i>Ana sayfaya dön
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

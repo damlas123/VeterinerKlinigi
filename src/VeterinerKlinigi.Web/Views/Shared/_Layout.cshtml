@@ -21,7 +21,7 @@
        nav'a verilseydi kapsayıcısı olan header kadar yer kaplayıp sayfayla birlikte kayardı. *@
     <header class="sticky-top">
         <nav class="navbar navbar-expand-lg pv-navbar">
-            <div class="container">
+            <div class="container-fluid px-lg-4">
                 <a class="navbar-brand d-flex align-items-center gap-2" asp-area="" asp-controller="Home" asp-action="Index">
                     <img src="~/img/pativet-logo.svg" alt="" width="36" height="36" />
                     <span>Pati<span class="text-primary">Vet</span></span>
@@ -39,7 +39,28 @@
                                 <i class="bi bi-house-heart me-1"></i>Ana Sayfa
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="About">
+                                <i class="bi bi-info-circle me-1"></i>Hakkımızda
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Catalog" asp-action="Services">
+                                <i class="bi bi-clipboard2-pulse me-1"></i>Hizmetlerimiz
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Catalog" asp-action="Veterinarians">
+                                <i class="bi bi-person-badge me-1"></i>Veterinerlerimiz
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Contact">
+                                <i class="bi bi-telephone me-1"></i>İletişim
+                            </a>
+                        </li>
                     </ul>
+                    <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>

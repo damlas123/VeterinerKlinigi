@@ -1,0 +1,52 @@
+@model ServicesPageViewModel
+@{
+    ViewData["Title"] = "Hizmetlerimiz";
+}
+
+<section class="container py-5">
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+        <div>
+            <h1 class="fw-bold mb-1">Hizmetlerimiz</h1>
+            <p class="text-body-secondary mb-0">Tüm hizmetlerimizin süre ve ücret bilgileri</p>
+        </div>
+        <form method="get" class="d-flex gap-2">
+            <select name="clinicId" class="form-select" onchange="this.form.submit()">
+                <option value="">Tüm klinikler</option>
+                @foreach (var c in Model.Clinics)
+                {
+                    <option value="@c.Id" selected="@(c.Id == Model.ClinicId)">@c.Name</option>
+                }
+            </select>
+        </form>
+    </div>
+
+    @foreach (var group in Model.Services.GroupBy(s => s.ClinicName))
+    {
+        <h2 class="h5 mt-4 mb-3"><i class="bi bi-hospital me-2 text-primary"></i>@group.Key</h2>
+        <div class="row g-3">
+            @foreach (var s in group)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card pv-card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between gap-2">
+                                <h5 class="card-title">@s.Name</h5>
+                                <span class="fw-bold text-primary text-nowrap">@s.Price.ToString("C2")</span>
+                            </div>
+                            <p class="small text-body-secondary">@s.Description</p>
+                            <div class="d-flex justify-content-between small">
+                                <span><i class="bi bi-clock me-1"></i>@s.Duration dakika</span>
+                                <a asp-action="Veterinarians" asp-route-serviceId="@s.Id">@s.VeterinarianCount hekim <i class="bi bi-chevron-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    @if (Model.Services.Count == 0)
+    {
+        <div class="pv-empty"><i class="bi bi-clipboard2-x"></i><p>Hizmet bulunamadı.</p></div>
+    }
+</section>

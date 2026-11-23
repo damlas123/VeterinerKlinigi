@@ -1,0 +1,75 @@
+@model VeterinarianDashboardDto
+@{
+    ViewData["Title"] = "Veteriner Paneli";
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+        <h1 class="h3 mb-1">Merhaba, @Model.VeterinarianName</h1>
+        <p class="text-body-secondary mb-0">@DateTime.Today.ToString("dd MMMM yyyy dddd") · bugünkü programınız aşağıda.</p>
+    </div>
+    <a asp-controller="Availability" asp-action="Index" class="btn btn-outline-primary rounded-pill"><i class="bi bi-clock me-1"></i>Müsaitlik saatlerim</a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Bugünkü randevular", Model.TodayCount.ToString(), "bi-calendar-day", "pv-icon-green", Url.Action("Index", "Appointments", new { From = DateTime.Today.ToString("yyyy-MM-dd"), To = DateTime.Today.ToString("yyyy-MM-dd") }))' /></div>
+    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Onay bekleyen", Model.PendingCount.ToString(), "bi-hourglass-split", "pv-icon-peach", Url.Action("Index", "Appointments", new { Status = "Pending" }))' /></div>
+    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Bu ay tamamlanan", Model.CompletedThisMonth.ToString(), "bi-clipboard2-check", "pv-icon-sky", Url.Action("Index", "ExaminationNotes"))' /></div>
+    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Hastalarım", Model.PatientCount.ToString(), "bi-heart", "pv-icon-lavender", Url.Action("Index", "Patients"))' /></div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-xl-8">
+        <div class="card pv-card h-100">
+            <div class="card-header bg-transparent"><h2 class="h6 mb-0">Bugünkü randevular</h2></div>
+            <div class="card-body">
+                @{ ViewData["ShowOwner"] = true; ViewData["ShowVet"] = false; }
+                <partial name="_AppointmentTable" model="Model.TodayAppointments" view-data="ViewData" />
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4">
+        <div class="card pv-card h-100">
+            <div class="card-body">
+                <h2 class="h6 mb-3">Önümüzdeki 7 gün</h2>
+                <div class="pv-chart"><canvas id="weekChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-xl-7">
+        <div class="card pv-card h-100">
+            <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <h2 class="h6 mb-0">Onayınızı bekleyen randevular</h2>
+                <a asp-controller="Appointments" asp-action="Index" asp-route-Status="Pending" class="small">Tümü</a>
+            </div>
+            <div class="card-body">
+                <partial name="_AppointmentTable" model="Model.PendingAppointments" view-data="ViewData" />
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-5">
+        <div class="card pv-card h-100">
+            <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <h2 class="h6 mb-0">Yaklaşan / geciken aşılar</h2>
+                <a asp-controller="Vaccinations" asp-action="Index" class="small">Aşı takvimi</a>
+            </div>
+            <div class="card-body">
+                @{ ViewData["ShowPet"] = true; ViewData["CanManage"] = false; }
+                <partial name="_VaccinationTable" model="Model.UpcomingVaccinations" view-data="ViewData" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/chart.js/chart.umd.min.js"></script>
+    <script src="~/js/charts.js" asp-append-version="true"></script>
+    <script>
+        $(function () {
+            PatiCharts.bar('weekChart', @Json.Serialize(Model.NextSevenDays), 'Randevu');
+        });
+    </script>
+}

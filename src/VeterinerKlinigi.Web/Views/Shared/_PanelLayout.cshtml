@@ -1,0 +1,67 @@
+@{
+    // Panel düzeni (Admin / Veteriner / Üye). Ana düzenin (_Layout) içine yerleşir;
+    // solda role göre değişen menü, sağda sayfanın içeriği bulunur.
+    Layout = "_Layout";
+    var area = ViewContext.RouteData.Values["area"] as string;
+    var (panelName, panelIcon) = area switch
+    {
+        "Admin" => ("Yönetim Paneli", "bi-shield-lock"),
+        "Veterinarian" => ("Veteriner Paneli", "bi-heart-pulse"),
+        _ => ("Üye Paneli", "bi-house-heart")
+    };
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <aside class="col-md-3 col-xl-2 pv-sidebar py-3">
+            <div class="pv-sidebar-title d-none d-md-flex align-items-center gap-2 px-3 mb-3">
+                <i class="bi @panelIcon"></i><span>@panelName</span>
+            </div>
+            <nav class="nav pv-side-nav flex-md-column flex-nowrap overflow-auto">
+                @if (area == "Admin")
+                {
+                    <a class="nav-link" asp-area="Admin" asp-controller="Dashboard" asp-action="Index"><i class="bi bi-speedometer2"></i>Dashboard</a>
+                    <a class="nav-link" asp-area="Admin" asp-controller="Clinics" asp-action="Index"><i class="bi bi-hospital"></i>Klinikler</a>
+                    <a class="nav-link" asp-area="Admin" asp-controller="Services" asp-action="Index"><i class="bi bi-clipboard2-pulse"></i>Hizmetler</a>
+                    <a class="nav-link" asp-area="Admin" asp-controller="Veterinarians" asp-action="Index"><i class="bi bi-person-badge"></i>Veterinerler</a>
+                    <a class="nav-link" asp-area="Admin" asp-controller="Owners" asp-action="Index"><i class="bi bi-people"></i>Kullanıcılar</a>
+                    <a class="nav-link" asp-area="Admin" asp-controller="Pets" asp-action="Index"><i class="bi bi-heart"></i>Evcil hayvanlar</a>
+                    <a class="nav-link" asp-area="Admin" asp-controller="Appointments" asp-action="Index"><i class="bi bi-calendar2-week"></i>Randevular</a>
+                    <a class="nav-link" asp-area="Admin" asp-controller="Reports" asp-action="Index"><i class="bi bi-bar-chart-line"></i>Raporlar</a>
+                }
+                else if (area == "Veterinarian")
+                {
+                    <a class="nav-link" asp-area="Veterinarian" asp-controller="Dashboard" asp-action="Index"><i class="bi bi-speedometer2"></i>Dashboard</a>
+                    <a class="nav-link" asp-area="Veterinarian" asp-controller="Appointments" asp-action="Index"><i class="bi bi-calendar2-week"></i>Randevularım</a>
+                    <a class="nav-link" asp-area="Veterinarian" asp-controller="ExaminationNotes" asp-action="Index"><i class="bi bi-journal-medical"></i>Muayene notlarım</a>
+                    <a class="nav-link" asp-area="Veterinarian" asp-controller="Patients" asp-action="Index"><i class="bi bi-heart"></i>Hastalarım</a>
+                    <a class="nav-link" asp-area="Veterinarian" asp-controller="Vaccinations" asp-action="Index"><i class="bi bi-capsule"></i>Aşı kayıtları</a>
+                    <a class="nav-link" asp-area="Veterinarian" asp-controller="Availability" asp-action="Index"><i class="bi bi-clock"></i>Müsaitlik saatlerim</a>
+                }
+                else
+                {
+                    <a class="nav-link" asp-area="Member" asp-controller="Dashboard" asp-action="Index"><i class="bi bi-speedometer2"></i>Dashboard</a>
+                    <a class="nav-link" asp-area="Member" asp-controller="Pets" asp-action="Index"><i class="bi bi-heart"></i>Evcil hayvanlarım</a>
+                    <a class="nav-link" asp-area="Member" asp-controller="Appointments" asp-action="Index"><i class="bi bi-calendar2-week"></i>Randevularım</a>
+                    <a class="nav-link" asp-area="Member" asp-controller="Appointments" asp-action="Create"><i class="bi bi-calendar-plus"></i>Yeni randevu</a>
+                    <a class="nav-link" asp-area="Member" asp-controller="Vaccinations" asp-action="Index"><i class="bi bi-capsule"></i>Aşı takvimi</a>
+                }
+                <hr class="d-none d-md-block my-2" />
+                <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Profile"><i class="bi bi-person"></i>Profilim</a>
+                <a class="nav-link" asp-area="" asp-controller="Account" asp-action="ApiToken"><i class="bi bi-robot"></i>API / MCP</a>
+            </nav>
+        </aside>
+
+        <section class="col-md-9 col-xl-10 py-4 px-lg-4 pv-panel-content">
+            <partial name="_StatusMessage" />
+            @RenderBody()
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    @await RenderSectionAsync("Scripts", required: false)
+}
+@section Styles {
+    @await RenderSectionAsync("Styles", required: false)
+}

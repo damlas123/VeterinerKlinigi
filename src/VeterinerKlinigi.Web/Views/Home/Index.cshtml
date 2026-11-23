@@ -1,4 +1,5 @@
-﻿@{
+﻿@model HomeViewModel
+@{
     ViewData["Title"] = "Ana Sayfa";
 }
 
@@ -17,9 +18,14 @@
                     PatiVet ile evcil hayvanlarınızın aşı takvimini takip edin, uzman hekimlerimizden
                     size en uygun saatte randevu alın ve tüm muayene geçmişine tek yerden ulaşın.
                 </p>
-                <a href="#ozellikler" class="btn btn-primary btn-lg rounded-pill px-4">
-                    <i class="bi bi-arrow-down-circle me-2"></i>Neler sunuyoruz?
-                </a>
+                <div class="d-flex flex-wrap gap-2">
+                    <a asp-controller="Panel" asp-action="Index" class="btn btn-primary btn-lg rounded-pill px-4">
+                        <i class="bi bi-calendar-plus me-2"></i>Randevu al
+                    </a>
+                    <a href="#ozellikler" class="btn btn-outline-primary btn-lg rounded-pill px-4">
+                        <i class="bi bi-arrow-down-circle me-2"></i>Neler sunuyoruz?
+                    </a>
+                </div>
             </div>
             <div class="col-lg-6">
                 <div class="pv-hero-visual mx-auto">
@@ -116,6 +122,67 @@
         </div>
     </div>
 </section>
+
+@* ===================== HİZMETLER (veritabanından) ===================== *@
+@if (Model.Services.Count > 0)
+{
+    <section class="container pb-5">
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-4">
+            <div>
+                <h2 class="fw-bold mb-1">Hizmetlerimiz</h2>
+                <p class="text-body-secondary mb-0">Süre ve ücretleriyle birlikte</p>
+            </div>
+            <a asp-controller="Catalog" asp-action="Services" class="btn btn-outline-primary rounded-pill">Tümünü gör <i class="bi bi-arrow-right"></i></a>
+        </div>
+        <div class="row g-3">
+            @foreach (var s in Model.Services)
+            {
+                <div class="col-sm-6 col-lg-4">
+                    <div class="card pv-card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start gap-2">
+                                <h5 class="card-title mb-1">@s.Name</h5>
+                                <span class="badge pv-badge">@s.Price.ToString("C0")</span>
+                            </div>
+                            <p class="small text-body-secondary mb-2">@s.Description</p>
+                            <span class="small"><i class="bi bi-clock me-1"></i>@s.Duration dakika</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+}
+
+@* ===================== VETERİNERLER (veritabanından) ===================== *@
+@if (Model.Veterinarians.Count > 0)
+{
+    <section class="container pb-5">
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-4">
+            <div>
+                <h2 class="fw-bold mb-1">Veteriner hekimlerimiz</h2>
+                <p class="text-body-secondary mb-0">Uzmanlık alanlarına göre hekiminizi seçin</p>
+            </div>
+            <a asp-controller="Catalog" asp-action="Veterinarians" class="btn btn-outline-primary rounded-pill">Tümünü gör <i class="bi bi-arrow-right"></i></a>
+        </div>
+        <div class="row g-3">
+            @foreach (var v in Model.Veterinarians)
+            {
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card pv-card h-100 text-center">
+                        <div class="card-body">
+                            <div class="pv-vet-avatar mx-auto mb-3">@v.FullName.Split(' ').Last()[..1]</div>
+                            <h6 class="mb-1">@v.FullName</h6>
+                            <div class="small text-primary mb-1">@v.Specialty</div>
+                            <div class="small text-body-secondary">@v.ClinicName</div>
+                            <a asp-controller="Catalog" asp-action="VeterinarianDetail" asp-route-id="@v.Id" class="stretched-link" aria-label="@v.FullName"></a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+}
 
 @* ===================== NASIL ÇALIŞIR? ===================== *@
 <section class="pv-soft-section py-5">

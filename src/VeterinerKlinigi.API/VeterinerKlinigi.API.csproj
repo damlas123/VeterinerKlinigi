@@ -14,4 +14,9 @@
     <ProjectReference Include="..\VeterinerKlinigi.Business\VeterinerKlinigi.Business.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- REST API ve MCP istemcileri "Authorization: Bearer <token>" başlığıyla kimlik doğrular -->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+  </ItemGroup>
+
 </Project>

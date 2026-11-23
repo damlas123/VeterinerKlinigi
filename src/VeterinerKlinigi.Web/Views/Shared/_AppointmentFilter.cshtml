@@ -1,0 +1,57 @@
+@model AppointmentFilter
+@*
+    Randevu listesi filtre formu (üç panelde ortak). GET ile gönderilir; değerler
+    AppointmentFilter nesnesine bağlanır. Klinik ve hekim seçimleri yalnızca
+    ViewData["Clinics"] / ViewData["Veterinarians"] verilmişse (Admin paneli) gösterilir.
+*@
+@{
+    var clinics = ViewData["Clinics"] as List<SelectListItem>;
+    var vets = ViewData["Veterinarians"] as List<SelectListItem>;
+    var statuses = Enum.GetValues<AppointmentStatus>();
+}
+<form method="get" class="card pv-card mb-4">
+    <div class="card-body">
+        <div class="row g-2 align-items-end">
+            <div class="col-sm-6 col-lg">
+                <label class="form-label small mb-1" for="filter-status">Durum</label>
+                <select name="Status" id="filter-status" class="form-select">
+                    <option value="">Tümü</option>
+                    @foreach (var s in statuses)
+                    {
+                        <option value="@s" selected="@(Model.Status == s)">@DisplayText.Status(s)</option>
+                    }
+                </select>
+            </div>
+            @if (clinics is not null)
+            {
+                <div class="col-sm-6 col-lg">
+                    <label class="form-label small mb-1" for="filter-clinic">Klinik</label>
+                    <select name="ClinicId" id="filter-clinic" class="form-select" asp-items="clinics">
+                        <option value="">Tümü</option>
+                    </select>
+                </div>
+            }
+            @if (vets is not null)
+            {
+                <div class="col-sm-6 col-lg">
+                    <label class="form-label small mb-1" for="filter-vet">Veteriner</label>
+                    <select name="VeterinarianId" id="filter-vet" class="form-select" asp-items="vets">
+                        <option value="">Tümü</option>
+                    </select>
+                </div>
+            }
+            <div class="col-sm-6 col-lg">
+                <label class="form-label small mb-1" for="filter-from">Başlangıç</label>
+                <input type="date" name="From" id="filter-from" value="@Model.From?.ToString("yyyy-MM-dd")" class="form-control" />
+            </div>
+            <div class="col-sm-6 col-lg">
+                <label class="form-label small mb-1" for="filter-to">Bitiş</label>
+                <input type="date" name="To" id="filter-to" value="@Model.To?.ToString("yyyy-MM-dd")" class="form-control" />
+            </div>
+            <div class="col-sm-6 col-lg-auto d-flex gap-2">
+                <button type="submit" class="btn btn-primary rounded-pill px-3"><i class="bi bi-funnel me-1"></i>Filtrele</button>
+                <a href="?" class="btn btn-light rounded-pill px-3" title="Filtreyi temizle"><i class="bi bi-x-lg"></i></a>
+            </div>
+        </div>
+    </div>
+</form>

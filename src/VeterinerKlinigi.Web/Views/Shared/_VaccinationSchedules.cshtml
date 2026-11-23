@@ -1,0 +1,41 @@
+@model IEnumerable<VaccinationScheduleDto>
+@*
+    Evcil hayvan başına aşı takvimi kartları (Üye: kendi hayvanları, Veteriner: hastaları).
+    Aynı veri MCP "asi_takvimi" aracı tarafından da kullanılır (IVaccinationService).
+*@
+@{
+    var area = ViewContext.RouteData.Values["area"] as string;
+    var petController = area == "Veterinarian" ? "Patients" : "Pets";
+    var list = Model.ToList();
+}
+@if (list.Count == 0)
+{
+    <div class="card pv-card"><div class="card-body"><div class="pv-empty"><i class="bi bi-capsule"></i><p class="mb-0">Gösterilecek aşı takvimi yok.</p></div></div></div>
+}
+else
+{
+    <div class="row g-4">
+        @foreach (var s in list)
+        {
+            <div class="col-12">
+                <div class="card pv-card">
+                    <div class="card-header bg-transparent d-flex flex-wrap justify-content-between align-items-center gap-2">
+                        <div>
+                            <a asp-controller="@petController" asp-action="Details" asp-route-id="@s.PetId" class="fw-semibold text-decoration-none fs-5">@s.PetName</a>
+                            <span class="text-body-secondary">· @s.SpeciesName</span>
+                        </div>
+                        <div class="d-flex gap-2">
+                            @if (s.Overdue.Count > 0) { <span class="badge rounded-pill text-bg-danger"><i class="bi bi-exclamation-triangle me-1"></i>@s.Overdue.Count gecikmiş</span> }
+                            @if (s.Upcoming.Count > 0) { <span class="badge rounded-pill pv-status-pending"><i class="bi bi-bell me-1"></i>@s.Upcoming.Count yaklaşan</span> }
+                            @if (s.Overdue.Count == 0 && s.Upcoming.Count == 0) { <span class="badge rounded-pill pv-status-approved"><i class="bi bi-check2 me-1"></i>Güncel</span> }
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        @{ ViewData["ShowPet"] = false; ViewData["CanManage"] = false; }
+                        <partial name="_VaccinationTable" model="s.History" view-data="ViewData" />
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

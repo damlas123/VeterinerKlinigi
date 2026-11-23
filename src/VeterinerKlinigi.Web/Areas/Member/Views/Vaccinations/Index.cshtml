@@ -1,0 +1,14 @@
+@model List<VaccinationScheduleDto>
+@{
+    ViewData["Title"] = "Aşı takvimi";
+}
+
+<div class="mb-4">
+    <h1 class="h3 mb-1">Aşı takvimi</h1>
+    <p class="text-body-secondary mb-0">
+        Evcil hayvanlarınızın yapılan aşıları ve sonraki doz tarihleri. Aşı kayıtlarını veteriner hekim girer;
+        yaklaşan bir doz için <a asp-controller="Appointments" asp-action="Create">randevu alabilirsiniz</a>.
+    </p>
+</div>
+
+<partial name="_VaccinationSchedules" model="Model" />

@@ -1,0 +1,59 @@
+@model List<ServiceDto>
+@{
+    ViewData["Title"] = "Hizmetler";
+    var clinics = (List<SelectListItem>)ViewData["Clinics"]!;
+    var clinicId = ViewData["ClinicId"] as int?;
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+        <h1 class="h3 mb-1">Hizmetler</h1>
+        <p class="text-body-secondary mb-0">Süre (dakika) ve ücretler randevu oluşturulurken randevuya kopyalanır.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <form method="get">
+            <select name="clinicId" class="form-select" onchange="this.form.submit()">
+                <option value="">Tüm klinikler</option>
+                @foreach (var c in clinics)
+                {
+                    <option value="@c.Value" selected="@(c.Value == clinicId?.ToString())">@c.Text</option>
+                }
+            </select>
+        </form>
+        <a asp-action="Create" asp-route-clinicId="@clinicId" class="btn btn-primary rounded-pill text-nowrap"><i class="bi bi-plus-lg me-1"></i>Yeni hizmet</a>
+    </div>
+</div>
+
+<div class="card pv-card">
+    <div class="card-body">
+        @if (Model.Count == 0)
+        {
+            <div class="pv-empty"><i class="bi bi-clipboard2-x"></i><p class="mb-0">Hizmet yok.</p></div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table pv-table align-middle mb-0">
+                    <thead><tr><th>Hizmet</th><th>Klinik</th><th class="text-center">Süre</th><th class="text-end">Ücret</th><th class="text-center">Hekim</th><th>Durum</th><th></th></tr></thead>
+                    <tbody>
+                        @foreach (var s in Model)
+                        {
+                            <tr class="@(s.IsActive ? "" : "opacity-50")">
+                                <td><div class="fw-semibold">@s.Name</div><div class="small text-body-secondary">@s.Description</div></td>
+                                <td>@s.ClinicName</td>
+                                <td class="text-center">@s.Duration dk</td>
+                                <td class="text-end">@s.Price.ToString("C2")</td>
+                                <td class="text-center">@s.VeterinarianCount</td>
+                                <td>@if (s.IsActive) { <span class="badge pv-status-approved">Aktif</span> } else { <span class="badge text-bg-secondary">Pasif</span> }</td>
+                                <td class="text-end text-nowrap">
+                                    <a asp-action="Edit" asp-route-id="@s.Id" class="btn btn-sm btn-outline-primary rounded-pill" title="Düzenle"><i class="bi bi-pencil"></i></a>
+                                    <a asp-action="Delete" asp-route-id="@s.Id" class="btn btn-sm btn-outline-danger rounded-pill" title="Sil"><i class="bi bi-trash"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

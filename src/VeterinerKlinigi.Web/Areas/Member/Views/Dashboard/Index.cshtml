@@ -1,0 +1,85 @@
+@model MemberDashboardDto
+@{
+    ViewData["Title"] = "Üye Paneli";
+    var fullName = User.FindFirst(AppClaimTypes.FullName)?.Value ?? User.Identity?.Name;
+    var today = DateOnly.FromDateTime(DateTime.Today);
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+        <h1 class="h3 mb-1">Merhaba, @fullName</h1>
+        <p class="text-body-secondary mb-0">Patili dostlarınızın randevuları ve aşıları tek ekranda.</p>
+    </div>
+    <a asp-controller="Appointments" asp-action="Create" class="btn btn-primary rounded-pill"><i class="bi bi-calendar-plus me-1"></i>Randevu al</a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Evcil hayvanlarım", Model.PetCount.ToString(), "bi-heart", "pv-icon-green", Url.Action("Index", "Pets"))' /></div>
+    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Yaklaşan randevu", Model.UpcomingAppointmentCount.ToString(), "bi-calendar-check", "pv-icon-sky", Url.Action("Index", "Appointments"))' /></div>
+    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Onay bekleyen", Model.PendingAppointmentCount.ToString(), "bi-hourglass-split", "pv-icon-peach", Url.Action("Index", "Appointments", new { Status = "Pending" }))' /></div>
+    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Yaklaşan / geciken aşı", Model.DueVaccinationCount.ToString(), "bi-capsule", "pv-icon-lavender", Url.Action("Index", "Vaccinations"))' /></div>
+</div>
+
+@if (Model.PetCount == 0)
+{
+    <div class="card pv-card mb-4">
+        <div class="card-body text-center py-5">
+            <div class="pv-icon pv-icon-green mb-3"><i class="bi bi-plus-lg"></i></div>
+            <h2 class="h5">İlk evcil hayvanınızı ekleyin</h2>
+            <p class="text-body-secondary">Randevu alabilmek için önce evcil hayvanınızın bilgilerini kaydedin.</p>
+            <a asp-controller="Pets" asp-action="Create" class="btn btn-primary rounded-pill px-4">Evcil hayvan ekle</a>
+        </div>
+    </div>
+}
+
+<div class="row g-4">
+    <div class="col-xl-8">
+        <div class="card pv-card h-100">
+            <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <h2 class="h6 mb-0">Yaklaşan randevularım</h2>
+                <a asp-controller="Appointments" asp-action="Index" class="small">Tümü</a>
+            </div>
+            <div class="card-body">
+                @{ ViewData["ShowOwner"] = false; ViewData["ShowVet"] = true; }
+                <partial name="_AppointmentTable" model="Model.UpcomingAppointments" view-data="ViewData" />
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4">
+        <div class="card pv-card mb-4">
+            <div class="card-body">
+                <h2 class="h6 mb-3">Evcil hayvanlarım</h2>
+                @foreach (var p in Model.Pets)
+                {
+                    <a asp-controller="Pets" asp-action="Details" asp-route-id="@p.Id" class="d-flex align-items-center gap-2 py-2 text-decoration-none text-reset border-bottom">
+                        @if (p.PhotoUrl is not null) { <img src="@p.PhotoUrl" alt="" class="pv-pet-thumb" /> } else { <span class="pv-pet-thumb pv-pet-placeholder"><i class="bi bi-heart"></i></span> }
+                        <span class="flex-grow-1"><span class="fw-semibold">@p.Name</span><br /><span class="small text-body-secondary">@p.SpeciesName · @DisplayText.Age(p.BirthDate, today)</span></span>
+                        <i class="bi bi-chevron-right text-body-secondary"></i>
+                    </a>
+                }
+                <a asp-controller="Pets" asp-action="Create" class="btn btn-sm btn-outline-primary rounded-pill mt-3"><i class="bi bi-plus-lg me-1"></i>Ekle</a>
+            </div>
+        </div>
+        <div class="card pv-card">
+            <div class="card-body">
+                <h2 class="h6 mb-3">Aşı hatırlatmaları</h2>
+                @if (Model.DueVaccinations.Count == 0)
+                {
+                    <p class="small text-body-secondary mb-0"><i class="bi bi-check2-circle me-1"></i>Önümüzdeki 30 gün içinde aşı yok.</p>
+                }
+                else
+                {
+                    <ul class="list-unstyled mb-0">
+                        @foreach (var v in Model.DueVaccinations)
+                        {
+                            <li class="d-flex justify-content-between align-items-center py-2 border-bottom small">
+                                <span><span class="fw-semibold">@v.PetName</span> · @v.VaccineName<br /><span class="text-body-secondary">@v.NextDoseDate?.ToString("dd.MM.yyyy")</span></span>
+                                <span class="badge rounded-pill @(v.DueState == VaccinationDueState.Overdue ? "text-bg-danger" : "pv-status-pending")">@v.DueStateText</span>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    </div>
+</div>

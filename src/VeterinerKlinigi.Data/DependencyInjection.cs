@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using VeterinerKlinigi.Data.Context;
+using VeterinerKlinigi.Data.Repositories;
+using VeterinerKlinigi.Data.Seed;
 
 namespace VeterinerKlinigi.Data;
 
@@ -25,6 +27,13 @@ public static class DependencyInjection
 
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(connectionString));
+
+        // Generic repository ve Unit of Work: istek başına bir tane (DbContext ile aynı ömür).
+        services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        // Başlangıç verisi (roller, admin, örnek veriler).
+        services.AddScoped<DbSeeder>();
 
         return services;
     }

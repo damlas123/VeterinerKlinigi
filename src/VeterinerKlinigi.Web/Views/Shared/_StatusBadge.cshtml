@@ -1,0 +1,12 @@
+@model AppointmentStatus
+@{
+    var (css, icon) = Model switch
+    {
+        AppointmentStatus.Pending => ("pv-status-pending", "bi-hourglass-split"),
+        AppointmentStatus.Approved => ("pv-status-approved", "bi-check-circle"),
+        AppointmentStatus.Rejected => ("pv-status-rejected", "bi-x-circle"),
+        AppointmentStatus.Completed => ("pv-status-completed", "bi-clipboard2-check"),
+        _ => ("pv-status-cancelled", "bi-slash-circle")
+    };
+}
+<span class="badge rounded-pill pv-status @css"><i class="bi @icon me-1"></i>@DisplayText.Status(Model)</span>

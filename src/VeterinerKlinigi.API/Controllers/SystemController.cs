@@ -10,10 +10,8 @@ namespace VeterinerKlinigi.API.Controllers;
 /// Uygulamanın ayakta olduğunu ve katmanların doğru bağlandığını doğrulayan uç.
 /// İstek akışı: Web (host) → API controller → Business katmanının kaydettiği TimeProvider.
 /// </summary>
-[ApiController]
 [Route("api/system")]
-[Produces("application/json")]
-public sealed class SystemController : ControllerBase
+public sealed class SystemController : ApiControllerBase
 {
     private readonly IHostEnvironment _environment;
     private readonly TimeProvider _timeProvider;

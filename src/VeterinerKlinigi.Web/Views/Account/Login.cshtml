@@ -1,0 +1,52 @@
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Giriş yap";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-5">
+            <partial name="_StatusMessage" />
+            <div class="card pv-card pv-auth-card">
+                <div class="card-body p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <img src="~/img/pativet-logo.svg" alt="" width="56" height="56" class="mb-3" />
+                        <h1 class="h3 mb-1">Tekrar hoş geldiniz</h1>
+                        <p class="text-body-secondary mb-0">Hesabınıza giriş yapın</p>
+                    </div>
+
+                    <form asp-action="Login" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                        <input type="hidden" asp-for="ReturnUrl" />
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Email" class="form-control" placeholder="ornek@eposta.com" autocomplete="username" autofocus />
+                            <label asp-for="Email"></label>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Password" class="form-control" placeholder="Parola" autocomplete="current-password" />
+                            <label asp-for="Password"></label>
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+                        <div class="form-check mb-4">
+                            <input asp-for="RememberMe" class="form-check-input" />
+                            <label asp-for="RememberMe" class="form-check-label"></label>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill w-100">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Giriş yap
+                        </button>
+                    </form>
+
+                    <p class="text-center mt-4 mb-0">
+                        Hesabınız yok mu? <a asp-action="Register">Hemen kayıt olun</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

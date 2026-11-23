@@ -1,0 +1,81 @@
+@model ApiTokenViewModel
+@{
+    ViewData["Title"] = "API / MCP erişim anahtarı";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <a asp-action="Profile" class="small text-decoration-none"><i class="bi bi-arrow-left"></i> Profilim</a>
+            <h1 class="h3 mt-2 mb-2">API / MCP erişim anahtarı</h1>
+            <p class="text-body-secondary">
+                Postman, <code>.http</code> dosyası veya bir yapay zekâ istemcisi (MCP Inspector, Claude Desktop) tarayıcı çerezi
+                kullanamaz. Bu istemciler kimliğinizi bir <strong>JWT</strong> (JSON Web Token) ile kanıtlar.
+                Anahtar sizin yetkilerinizle çalışır ve sadece sizin verilerinize erişir; kimseyle paylaşmayın.
+            </p>
+
+            @if (Model.IsEphemeralKey)
+            {
+                <div class="alert alert-warning small">
+                    <i class="bi bi-exclamation-triangle me-1"></i>
+                    Sunucuda kalıcı bir JWT anahtarı tanımlı değil; uygulama yeniden başlatılınca bu anahtar geçersiz olur.
+                    Kalıcı anahtar için: <code>dotnet user-secrets set "Jwt:Key" "&lt;en az 32 karakter&gt;" --project src/VeterinerKlinigi.Web</code>
+                </div>
+            }
+
+            <div class="card pv-card mb-4">
+                <div class="card-body">
+                    @if (Model.Token is null)
+                    {
+                        <form asp-action="ApiToken" method="post">
+                            <button type="submit" class="btn btn-primary rounded-pill px-4"><i class="bi bi-key me-1"></i>Yeni anahtar oluştur</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <label class="form-label fw-semibold" for="token">Erişim anahtarınız (Bearer token)</label>
+                        <textarea id="token" class="form-control font-monospace small" rows="5" readonly>@Model.Token</textarea>
+                        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-2">
+                            <span class="small text-body-secondary">Geçerlilik: @Model.ExpiresAt?.ToLocalTime().ToString("dd.MM.yyyy HH:mm") tarihine kadar</span>
+                            <button type="button" class="btn btn-outline-primary btn-sm rounded-pill" data-copy-target="#token"><i class="bi bi-clipboard me-1"></i>Kopyala</button>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card pv-card h-100">
+                        <div class="card-body">
+                            <h2 class="h5"><i class="bi bi-robot me-2 text-primary"></i>MCP Inspector ile bağlanma</h2>
+                            <ol class="small mb-0">
+                                <li>Uygulamayı <strong>http</strong> profiliyle çalıştırın.</li>
+                                <li>Terminalde: <code>npx @@modelcontextprotocol/inspector</code></li>
+                                <li>Transport Type: <strong>Streamable HTTP</strong></li>
+                                <li>URL: <code>http://localhost:5080/mcp</code></li>
+                                <li>Authentication → Header: <code>Authorization</code>, değer: <code>Bearer &lt;anahtar&gt;</code></li>
+                                <li><strong>Connect</strong> → <strong>Tools</strong> → <strong>List Tools</strong></li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card pv-card h-100">
+                        <div class="card-body">
+                            <h2 class="h5"><i class="bi bi-braces me-2 text-primary"></i>REST API örneği</h2>
+                            <pre class="pv-code small mb-0">GET @Model.BaseUrl/api/pets
+Authorization: Bearer &lt;anahtar&gt;
+
+POST @Model.BaseUrl/api/appointments
+Authorization: Bearer &lt;anahtar&gt;
+Content-Type: application/json
+
+{ "petId": 1, "serviceId": 1, "veterinarianId": 1,
+  "appointmentDate": "2026-11-25T10:30:00" }</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

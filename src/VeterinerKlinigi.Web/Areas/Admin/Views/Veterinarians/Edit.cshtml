@@ -1,0 +1,65 @@
+@model VeterinarianUpdateDto
+@{
+    ViewData["Title"] = "Veterineri düzenle";
+    var id = (int)ViewData["Id"]!;
+    var clinics = (List<SelectListItem>)ViewData["Clinics"]!;
+}
+
+<a asp-action="Details" asp-route-id="@id" class="small text-decoration-none"><i class="bi bi-arrow-left"></i> Hekim detayı</a>
+<h1 class="h3 mt-1 mb-4">Veterineri düzenle</h1>
+
+<form asp-action="Edit" asp-route-id="@id" method="post">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    <div class="card pv-card">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="FullName" class="form-label"></label>
+                    <input asp-for="FullName" class="form-control" />
+                    <span asp-validation-for="FullName" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Specialty" class="form-label"></label>
+                    <input asp-for="Specialty" class="form-control" />
+                    <span asp-validation-for="Specialty" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="ClinicId" class="form-label"></label>
+                    <select asp-for="ClinicId" asp-items="clinics" class="form-select">
+                        <option value="">Klinik seçin</option>
+                    </select>
+                    <span asp-validation-for="ClinicId" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="PhoneNumber" class="form-label"></label>
+                    <input asp-for="PhoneNumber" class="form-control" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="Biography" class="form-label"></label>
+                    <textarea asp-for="Biography" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Biography" class="text-danger small"></span>
+                </div>
+                <div class="col-12">
+                    <partial name="_ServiceCheckboxes" />
+                </div>
+                <div class="col-12">
+                    <div class="form-check form-switch">
+                        <input asp-for="IsActive" class="form-check-input" role="switch" />
+                        <label asp-for="IsActive" class="form-check-label"></label>
+                    </div>
+                    <div class="form-text">Pasif hekim randevu listelerinde görünmez ve yeni randevu alamaz.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex gap-2 mt-4">
+        <button type="submit" class="btn btn-primary rounded-pill px-4"><i class="bi bi-check-lg me-1"></i>Kaydet</button>
+        <a asp-action="Details" asp-route-id="@id" class="btn btn-light rounded-pill px-4">Vazgeç</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <partial name="_ServicePickerScript" />
+}

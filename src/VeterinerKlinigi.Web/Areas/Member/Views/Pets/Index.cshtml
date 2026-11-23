@@ -1,0 +1,52 @@
+@model List<PetDto>
+@{
+    ViewData["Title"] = "Evcil hayvanlarım";
+    var today = DateOnly.FromDateTime(DateTime.Today);
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+        <h1 class="h3 mb-1">Evcil hayvanlarım</h1>
+        <p class="text-body-secondary mb-0">Kayıtlı @Model.Count evcil hayvanınız var.</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary rounded-pill"><i class="bi bi-plus-lg me-1"></i>Evcil hayvan ekle</a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="card pv-card"><div class="card-body"><div class="pv-empty"><i class="bi bi-heart"></i><p class="mb-2">Henüz evcil hayvan eklemediniz.</p><a asp-action="Create" class="btn btn-sm btn-primary rounded-pill">Şimdi ekle</a></div></div></div>
+}
+else
+{
+    <div class="row g-4">
+        @foreach (var p in Model)
+        {
+            <div class="col-sm-6 col-xl-4">
+                <div class="card pv-card h-100 pv-pet-card">
+                    @if (p.PhotoUrl is not null)
+                    {
+                        <img src="@p.PhotoUrl" alt="@p.Name" class="card-img-top pv-pet-cover" />
+                    }
+                    else
+                    {
+                        <div class="pv-pet-cover pv-pet-placeholder"><i class="bi bi-heart"></i></div>
+                    }
+                    <div class="card-body">
+                        <h2 class="h5 mb-1">@p.Name</h2>
+                        <p class="text-body-secondary small mb-2">@p.SpeciesName · @(p.Breed ?? "Irk belirtilmemiş")</p>
+                        <div class="d-flex gap-3 small mb-3">
+                            <span><i class="bi bi-cake2 me-1"></i>@DisplayText.Age(p.BirthDate, today)</span>
+                            <span><i class="bi bi-speedometer me-1"></i>@p.Weight.ToString("0.##") kg</span>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a asp-action="Details" asp-route-id="@p.Id" class="btn btn-sm btn-outline-primary rounded-pill">Sağlık geçmişi</a>
+                            <a asp-controller="Appointments" asp-action="Create" asp-route-petId="@p.Id" class="btn btn-sm btn-primary rounded-pill"><i class="bi bi-calendar-plus me-1"></i>Randevu</a>
+                            <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-sm btn-light rounded-pill" title="Düzenle"><i class="bi bi-pencil"></i></a>
+                            <a asp-action="Delete" asp-route-id="@p.Id" class="btn btn-sm btn-light rounded-pill text-danger" title="Sil"><i class="bi bi-trash"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

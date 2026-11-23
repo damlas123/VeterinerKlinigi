@@ -1,0 +1,64 @@
+@model List<PetDto>
+@{
+    ViewData["Title"] = "Evcil hayvanlar";
+    var search = ViewData["Search"] as string;
+    var includeInactive = ViewData["IncludeInactive"] as bool? ?? false;
+    var today = DateOnly.FromDateTime(DateTime.Today);
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+        <h1 class="h3 mb-1">Evcil hayvanlar</h1>
+        <p class="text-body-secondary mb-0">Sistemdeki tüm hastalar — kayıtları sahipleri üye panelinden oluşturur.</p>
+    </div>
+    <form method="get" class="d-flex flex-wrap gap-2 align-items-center">
+        <input type="search" name="search" value="@search" class="form-control" style="max-width: 16rem" placeholder="Hayvan, ırk veya sahip" />
+        <div class="form-check mb-0">
+            <input class="form-check-input" type="checkbox" name="includeInactive" value="true" id="includeInactive" checked="@includeInactive" onchange="this.form.submit()" />
+            <label class="form-check-label small" for="includeInactive">Arşivdekiler</label>
+        </div>
+        <button class="btn btn-outline-primary rounded-pill" type="submit"><i class="bi bi-search"></i></button>
+    </form>
+</div>
+
+<div class="card pv-card">
+    <div class="card-body">
+        @if (Model.Count == 0)
+        {
+            <div class="pv-empty"><i class="bi bi-heart"></i><p class="mb-0">Kayıt bulunamadı.</p></div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table pv-table align-middle mb-0">
+                    <thead><tr><th>Hayvan</th><th>Tür / ırk</th><th>Yaş</th><th class="text-end">Kilo</th><th>Sahibi</th><th></th></tr></thead>
+                    <tbody>
+                        @foreach (var p in Model)
+                        {
+                            <tr class="@(p.IsActive ? "" : "opacity-50")">
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        @if (p.PhotoUrl is not null) { <img src="@p.PhotoUrl" alt="" class="pv-pet-thumb" /> } else { <span class="pv-pet-thumb pv-pet-placeholder"><i class="bi bi-heart"></i></span> }
+                                        <a asp-action="Details" asp-route-id="@p.Id" class="fw-semibold text-decoration-none">@p.Name</a>
+                                        @if (!p.IsActive) { <span class="badge text-bg-secondary">Arşiv</span> }
+                                    </div>
+                                </td>
+                                <td>@p.SpeciesName <span class="text-body-secondary">· @(p.Breed ?? "-")</span></td>
+                                <td>@DisplayText.Age(p.BirthDate, today)</td>
+                                <td class="text-end">@p.Weight.ToString("0.##") kg</td>
+                                <td><a asp-controller="Owners" asp-action="Details" asp-route-id="@p.OwnerId" class="text-decoration-none">@p.OwnerName</a></td>
+                                <td class="text-end text-nowrap">
+                                    <a asp-action="Details" asp-route-id="@p.Id" class="btn btn-sm btn-light rounded-pill" title="Sağlık geçmişi"><i class="bi bi-eye"></i></a>
+                                    @if (p.IsActive)
+                                    {
+                                        <a asp-action="Delete" asp-route-id="@p.Id" class="btn btn-sm btn-outline-danger rounded-pill" title="Sil"><i class="bi bi-trash"></i></a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

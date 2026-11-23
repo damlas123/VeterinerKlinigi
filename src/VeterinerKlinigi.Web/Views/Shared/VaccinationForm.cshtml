@@ -1,0 +1,64 @@
+@model VaccinationSaveDto
+@* Aşı kaydı formu — Admin ve Veteriner panelinde ortak. *@
+@{
+    var id = ViewData["Id"] as int?;
+    var today = DateOnly.FromDateTime(DateTime.Today).ToString("yyyy-MM-dd");
+}
+
+<a href="@ViewData["CancelUrl"]" class="small text-decoration-none"><i class="bi bi-arrow-left"></i> @ViewData["PetName"]</a>
+<h1 class="h3 mt-1 mb-4">@ViewData["Title"] <small class="text-body-secondary fs-5">· @ViewData["PetName"]</small></h1>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card pv-card">
+            <div class="card-body">
+                <form asp-action="@(id is null ? "Create" : "Edit")" asp-route-id="@id" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                    <input type="hidden" asp-for="PetId" />
+                    <input type="hidden" asp-for="VeterinarianId" />
+
+                    <div class="mb-3">
+                        <label asp-for="VaccineName" class="form-label"></label>
+                        <input asp-for="VaccineName" class="form-control" list="vaccine-suggestions" placeholder="Örn: Karma Aşı, Kuduz Aşısı" />
+                        <datalist id="vaccine-suggestions">
+                            <option value="Karma Aşı (DHPPi+L)"></option>
+                            <option value="Karma Aşı (FVRCP)"></option>
+                            <option value="Kuduz Aşısı"></option>
+                            <option value="Lösemi (FeLV) Aşısı"></option>
+                            <option value="Bronşin (Kennel Cough) Aşısı"></option>
+                            <option value="İç-Dış Parazit Uygulaması"></option>
+                            <option value="RHD Aşısı"></option>
+                        </datalist>
+                        <span asp-validation-for="VaccineName" class="text-danger small"></span>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-sm-6">
+                            <label asp-for="VaccinationDate" class="form-label"></label>
+                            <input asp-for="VaccinationDate" class="form-control" max="@today" />
+                            <span asp-validation-for="VaccinationDate" class="text-danger small"></span>
+                        </div>
+                        <div class="col-sm-6">
+                            <label asp-for="NextDoseDate" class="form-label"></label>
+                            <input asp-for="NextDoseDate" class="form-control" />
+                            <span asp-validation-for="NextDoseDate" class="text-danger small"></span>
+                            <div class="form-text">Boş bırakılabilir. Doluysa uygulama tarihinden sonra olmalıdır.</div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label"></label>
+                        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary rounded-pill px-4"><i class="bi bi-check-lg me-1"></i>Kaydet</button>
+                        <a href="@ViewData["CancelUrl"]" class="btn btn-light rounded-pill px-4">Vazgeç</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,19 @@
+@model List<AppointmentDto>
+@{
+    ViewData["Title"] = "Randevularım";
+    var filter = (AppointmentFilter)ViewData["Filter"]!;
+}
+
+<div class="mb-4">
+    <h1 class="h3 mb-1">Randevularım</h1>
+    <p class="text-body-secondary mb-0">Yalnızca size alınan randevular listelenir · @Model.Count kayıt</p>
+</div>
+
+<partial name="_AppointmentFilter" model="filter" />
+
+<div class="card pv-card">
+    <div class="card-body">
+        @{ ViewData["ShowOwner"] = true; ViewData["ShowVet"] = false; }
+        <partial name="_AppointmentTable" model="Model" view-data="ViewData" />
+    </div>
+</div>

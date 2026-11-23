@@ -1,0 +1,93 @@
+# =====================================================================
+# PatiVet REST API — örnek istekler
+# Visual Studio'da her isteğin üstündeki "Send request" bağlantısıyla çalıştırılır.
+# 1) Önce "token" isteğini gönderin; dönen accessToken aşağıdaki @token değişkenine otomatik atanır.
+# =====================================================================
+
+@baseUrl = http://localhost:5080
+
+### Sistem durumu (giriş gerekmez)
+GET {{baseUrl}}/api/system/status
+
+### Üye olarak token al
+# @name login
+POST {{baseUrl}}/api/auth/token
+Content-Type: application/json
+
+{
+  "email": "uye@pativet.test",
+  "password": "Demo123!"
+}
+
+###
+@token = {{login.response.body.$.accessToken}}
+
+### Token sahibi
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer {{token}}
+
+### Hizmetler (giriş gerekmez)
+GET {{baseUrl}}/api/services
+
+### Belirli hizmeti veren veterinerler
+GET {{baseUrl}}/api/veterinarians?serviceId=1
+
+### Evcil hayvanlarım (üye yalnızca kendi hayvanlarını görür)
+GET {{baseUrl}}/api/pets
+Authorization: Bearer {{token}}
+
+### Aşı takvimi
+GET {{baseUrl}}/api/pets/1/vaccinations
+Authorization: Bearer {{token}}
+
+### Uygun saatler (tarihi ileri bir güne göre değiştirin)
+GET {{baseUrl}}/api/appointments/available-slots?serviceId=1&date=2026-11-26
+Authorization: Bearer {{token}}
+
+### Randevu oluştur → 201 Created (aynı isteği ikinci kez göndermek 409 Çakışma döndürür)
+POST {{baseUrl}}/api/appointments
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "petId": 1,
+  "serviceId": 1,
+  "veterinarianId": 1,
+  "appointmentDate": "2026-11-26T10:00:00",
+  "ownerNote": "Son iki gündür iştahsız."
+}
+
+### Randevularım (durum filtresi: Pending, Approved, Rejected, Completed, Cancelled)
+GET {{baseUrl}}/api/appointments?status=Pending
+Authorization: Bearer {{token}}
+
+### Başkasına ait kayıt → 404 (Burak'ın hayvanı; id'yi kendi verinize göre değiştirin)
+GET {{baseUrl}}/api/pets/3
+Authorization: Bearer {{token}}
+
+### Token olmadan veri değiştirme → 401
+POST {{baseUrl}}/api/appointments
+Content-Type: application/json
+
+{ "petId": 1, "serviceId": 1, "veterinarianId": 1, "appointmentDate": "2026-11-26T11:00:00" }
+
+### ---------------- Admin ----------------
+# @name adminLogin
+POST {{baseUrl}}/api/auth/token
+Content-Type: application/json
+
+{
+  "email": "b241210351@sakarya.edu.tr",
+  "password": "sau"
+}
+
+###
+@adminToken = {{adminLogin.response.body.$.accessToken}}
+
+### Hizmet bazında ciro raporu (LINQ GroupBy)
+GET {{baseUrl}}/api/reports/revenue?from=2026-06-01&to=2026-11-30
+Authorization: Bearer {{adminToken}}
+
+### Dashboard verileri
+GET {{baseUrl}}/api/reports/dashboard
+Authorization: Bearer {{adminToken}}

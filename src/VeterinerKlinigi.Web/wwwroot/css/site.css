@@ -249,3 +249,280 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: center;
     box-shadow: var(--pv-shadow);
 }
+
+/* ---------------------------------------------------------------------
+   Panel düzeni: sol menü (sidebar) + içerik
+   --------------------------------------------------------------------- */
+.pv-sidebar {
+    background-color: #ffffff;
+    border-right: 1px solid var(--pv-border);
+}
+
+@media (min-width: 768px) {
+    .pv-sidebar {
+        position: sticky;
+        top: 4.5rem;
+        height: calc(100vh - 4.5rem);
+        overflow-y: auto;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .pv-sidebar {
+        border-right: 0;
+        border-bottom: 1px solid var(--pv-border);
+    }
+}
+
+.pv-sidebar-title {
+    font-weight: 700;
+    color: var(--pv-primary-dark);
+}
+
+.pv-side-nav .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--pv-text);
+    border-radius: 0.7rem;
+    padding: 0.55rem 0.9rem;
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.pv-side-nav .nav-link:hover,
+.pv-side-nav .nav-link.active {
+    background-color: var(--pv-primary-soft);
+    color: var(--pv-primary-dark);
+}
+
+.pv-panel-content {
+    min-height: calc(100vh - 4.5rem);
+}
+
+/* Panel kartlarında hover'da yukarı kayma olmasın (tablolar ve formlar için daha sakin) */
+.pv-panel-content .pv-card:hover {
+    transform: none;
+    box-shadow: var(--pv-shadow);
+}
+
+.pv-panel-content .pv-stat:hover {
+    transform: translateY(-3px);
+}
+
+.pv-auth-card {
+    max-width: 30rem;
+    margin-inline: auto;
+}
+
+/* ---------------------------------------------------------------------
+   Tablolar, boş durumlar, etiketler
+   --------------------------------------------------------------------- */
+.pv-table {
+    --bs-table-bg: transparent;
+}
+
+.pv-table thead th {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #6c8a80;
+    border-bottom-color: var(--pv-border);
+    white-space: nowrap;
+}
+
+.pv-table td {
+    border-bottom-color: var(--pv-border);
+}
+
+.pv-table tbody tr:hover {
+    background-color: #fbfdfc;
+}
+
+.pv-empty {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    color: #6c8a80;
+}
+
+.pv-empty > i {
+    display: block;
+    font-size: 2.25rem;
+    margin-bottom: 0.5rem;
+    color: #a9c7bb;
+}
+
+.pv-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #6c8a80;
+    margin-bottom: 0.15rem;
+}
+
+.pv-note {
+    background-color: var(--pv-peach);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    white-space: pre-line;
+}
+
+.pv-code {
+    background-color: #f3f7f5;
+    border: 1px solid var(--pv-border);
+    border-radius: 0.75rem;
+    padding: 0.85rem 1rem;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.pv-tabs .nav-link {
+    border-radius: 2rem;
+    color: var(--pv-text);
+}
+
+.pv-tabs .nav-link.active {
+    background-color: var(--pv-primary);
+}
+
+/* ---------------------------------------------------------------------
+   Randevu durum rozetleri (Bekliyor, Onaylandı, Reddedildi, Tamamlandı, İptal)
+   --------------------------------------------------------------------- */
+.pv-status { font-weight: 500; padding: 0.4rem 0.75rem; }
+.pv-status-pending { background-color: var(--pv-peach); color: var(--pv-peach-text); }
+.pv-status-approved { background-color: var(--pv-mint); color: var(--pv-primary-dark); }
+.pv-status-rejected { background-color: #fdeaea; color: #b4383a; }
+.pv-status-completed { background-color: var(--pv-sky); color: var(--pv-sky-text); }
+.pv-status-cancelled { background-color: #eef0f1; color: #5f6b70; }
+
+/* ---------------------------------------------------------------------
+   Avatarlar ve evcil hayvan fotoğrafları
+   --------------------------------------------------------------------- */
+.pv-avatar,
+.pv-vet-avatar {
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 50%;
+    background-color: var(--pv-mint);
+    color: var(--pv-primary-dark);
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.pv-vet-avatar {
+    width: 4rem;
+    height: 4rem;
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, var(--pv-mint), var(--pv-sky));
+}
+
+.pv-avatar-lg,
+.pv-vet-avatar-lg {
+    width: 4.5rem;
+    height: 4.5rem;
+    font-size: 1.75rem;
+}
+
+.pv-pet-thumb,
+.pv-pet-photo,
+.pv-pet-photo-lg {
+    border-radius: 0.9rem;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.pv-pet-thumb { width: 2.5rem; height: 2.5rem; border-radius: 0.7rem; }
+.pv-pet-photo { width: 4.5rem; height: 4.5rem; }
+.pv-pet-photo-lg { width: 7rem; height: 7rem; border-radius: 1.25rem; }
+
+.pv-pet-cover {
+    height: 11rem;
+    object-fit: cover;
+    border-top-left-radius: var(--pv-radius);
+    border-top-right-radius: var(--pv-radius);
+}
+
+.pv-pet-placeholder {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--pv-mint), var(--pv-lavender));
+    color: var(--pv-primary);
+    font-size: 1.5rem;
+}
+
+div.pv-pet-cover.pv-pet-placeholder {
+    display: flex;
+    font-size: 3rem;
+}
+
+/* ---------------------------------------------------------------------
+   Grafikler, zaman çizelgesi, randevu sihirbazı
+   --------------------------------------------------------------------- */
+.pv-chart { position: relative; height: 260px; }
+.pv-chart-tall { height: 340px; }
+
+.pv-timeline { position: relative; padding-left: 1.5rem; }
+
+.pv-timeline::before {
+    content: "";
+    position: absolute;
+    left: 0.45rem;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    width: 2px;
+    background-color: var(--pv-border);
+}
+
+.pv-timeline-item { position: relative; margin-bottom: 1rem; }
+
+.pv-timeline-item::before {
+    content: "";
+    position: absolute;
+    left: -1.35rem;
+    top: 1.3rem;
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 50%;
+    background-color: var(--pv-primary);
+    box-shadow: 0 0 0 4px var(--pv-primary-soft);
+}
+
+.pv-step-no {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-right: 0.5rem;
+    border-radius: 50%;
+    background-color: var(--pv-primary-soft);
+    color: var(--pv-primary-dark);
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.pv-slot-area { min-height: 10rem; }
+
+.pv-slot-vet {
+    border: 1px solid var(--pv-border);
+    border-radius: 0.9rem;
+    padding: 0.9rem 1rem;
+}
+
+.pv-slot {
+    min-width: 4.5rem;
+    border: 1px solid var(--pv-border);
+    background-color: #ffffff;
+    border-radius: 2rem;
+    font-weight: 500;
+}
+
+.pv-slot:hover { border-color: var(--pv-primary); color: var(--pv-primary); }
+.pv-slot.active { background-color: var(--pv-primary); border-color: var(--pv-primary); color: #ffffff; }
+
+.pv-service-picker { background-color: #fbfdfc; }

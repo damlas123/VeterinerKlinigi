@@ -1,0 +1,82 @@
+@model VeterinariansPageViewModel
+@{
+    ViewData["Title"] = "Veterinerlerimiz";
+}
+
+<section class="container py-5">
+    <h1 class="fw-bold mb-1">Veterinerlerimiz</h1>
+    <p class="text-body-secondary">Klinik, hizmet veya uzmanlık alanına göre filtreleyin.</p>
+
+    @* Filtreler GET ile gönderilir; servis katmanında LINQ ile sorguya eklenir. *@
+    <form method="get" class="card pv-card mb-4">
+        <div class="card-body row g-2 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label small">Klinik</label>
+                <select name="clinicId" class="form-select">
+                    <option value="">Tümü</option>
+                    @foreach (var c in Model.Clinics)
+                    {
+                        <option value="@c.Id" selected="@(c.Id == Model.ClinicId)">@c.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small">Hizmet</label>
+                <select name="serviceId" class="form-select">
+                    <option value="">Tümü</option>
+                    @foreach (var s in Model.Services)
+                    {
+                        <option value="@s.Id" selected="@(s.Id == Model.ServiceId)">@s.Name (@s.ClinicName)</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small">Uzmanlık</label>
+                <select name="specialty" class="form-select">
+                    <option value="">Tümü</option>
+                    @foreach (var sp in Model.Specialties)
+                    {
+                        <option value="@sp" selected="@(sp == Model.Specialty)">@sp</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary rounded-pill flex-grow-1"><i class="bi bi-funnel me-1"></i>Filtrele</button>
+                <a asp-action="Veterinarians" class="btn btn-light rounded-pill">Temizle</a>
+            </div>
+        </div>
+    </form>
+
+    <div class="row g-4">
+        @foreach (var v in Model.Veterinarians)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="card pv-card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="pv-vet-avatar">@v.FullName.Split(' ').Last()[..1]</div>
+                            <div>
+                                <h5 class="mb-0">@v.FullName</h5>
+                                <div class="small text-primary">@v.Specialty</div>
+                                <div class="small text-body-secondary">@v.ClinicName</div>
+                            </div>
+                        </div>
+                        <p class="small text-body-secondary">@v.Biography</p>
+                        <div class="d-flex flex-wrap gap-1">
+                            @foreach (var s in v.Services)
+                            {
+                                <span class="badge pv-badge">@s.Name</span>
+                            }
+                        </div>
+                        <a asp-action="VeterinarianDetail" asp-route-id="@v.Id" class="stretched-link" aria-label="@v.FullName"></a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (Model.Veterinarians.Count == 0)
+    {
+        <div class="pv-empty"><i class="bi bi-person-x"></i><p>Filtrelere uyan veteriner bulunamadı.</p></div>
+    }
+</section>

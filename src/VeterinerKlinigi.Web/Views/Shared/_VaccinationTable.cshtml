@@ -1,0 +1,68 @@
+@model IEnumerable<VaccinationDto>
+@*
+    Aşı tablosu. ViewData["CanManage"] true ise düzenle/sil bağlantıları gösterilir
+    (bulunulan Area'nın Vaccinations controller'ına gider: Admin veya Veteriner paneli).
+*@
+@{
+    var canManage = ViewData["CanManage"] as bool? ?? false;
+    var showPet = ViewData["ShowPet"] as bool? ?? false;
+    var list = Model.ToList();
+}
+@if (list.Count == 0)
+{
+    <div class="pv-empty py-4">
+        <i class="bi bi-capsule"></i>
+        <p class="mb-0">Henüz aşı kaydı yok.</p>
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table pv-table align-middle mb-0">
+            <thead>
+                <tr>
+                    @if (showPet) { <th>Evcil hayvan</th> }
+                    <th>Aşı</th>
+                    <th>Uygulama</th>
+                    <th>Sonraki doz</th>
+                    <th>Durum</th>
+                    <th>Hekim</th>
+                    @if (canManage) { <th></th> }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var v in list)
+                {
+                    var badge = v.DueState switch
+                    {
+                        VaccinationDueState.Overdue => "text-bg-danger",
+                        VaccinationDueState.Upcoming => "pv-status-pending",
+                        VaccinationDueState.Planned => "pv-status-approved",
+                        _ => "text-bg-light"
+                    };
+                    <tr>
+                        @if (showPet) { <td class="fw-semibold">@v.PetName</td> }
+                        <td>
+                            <div class="fw-semibold">@v.VaccineName</div>
+                            @if (!string.IsNullOrEmpty(v.Description))
+                            {
+                                <div class="small text-body-secondary">@v.Description</div>
+                            }
+                        </td>
+                        <td>@v.VaccinationDate.ToString("dd.MM.yyyy")</td>
+                        <td>@(v.NextDoseDate?.ToString("dd.MM.yyyy") ?? "-")</td>
+                        <td><span class="badge rounded-pill @badge">@v.DueStateText</span></td>
+                        <td class="small">@(v.VeterinarianName ?? "Başka klinik")</td>
+                        @if (canManage)
+                        {
+                            <td class="text-end text-nowrap">
+                                <a asp-controller="Vaccinations" asp-action="Edit" asp-route-id="@v.Id" class="btn btn-sm btn-outline-primary rounded-pill" title="Düzenle"><i class="bi bi-pencil"></i></a>
+                                <a asp-controller="Vaccinations" asp-action="Delete" asp-route-id="@v.Id" class="btn btn-sm btn-outline-danger rounded-pill" title="Sil"><i class="bi bi-trash"></i></a>
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
