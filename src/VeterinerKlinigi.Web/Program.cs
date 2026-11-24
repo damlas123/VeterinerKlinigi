@@ -27,28 +27,18 @@ using VeterinerKlinigi.Web.Mcp;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ---------------------------------------------------------------------
-// 1) SERVİS KAYITLARI (Dependency Injection)
-// ---------------------------------------------------------------------
 
-// Veri katmanı: AppDbContext'i SQL Server bağlantısıyla kaydeder (Data/DependencyInjection.cs).
-// Bağlantı dizesi appsettings.json → "ConnectionStrings:DefaultConnection" ayarından okunur.
-// Aynı anahtar user-secrets'ta tanımlıysa o değer önceliklidir (farklı SQL Server kullananlar için).
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException(
         "Veritabanı bağlantı dizesi bulunamadı. appsettings.json içinde 'ConnectionStrings:DefaultConnection' tanımlayın.");
 builder.Services.AddDataLayer(connectionString);
 
-// İş katmanının servisleri (Business/DependencyInjection.cs).
-// Web projesi Business'ın iç yapısını bilmez; sadece bu tek metodu çağırır.
 builder.Services.AddBusinessLayer();
 builder.Services.Configure<AppointmentOptions>(builder.Configuration.GetSection(AppointmentOptions.SectionName));
 
-// Giriş yapan kullanıcı bilgisi (Business katmanındaki sahiplik kontrolleri bunu kullanır).
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
-// Güvenli fotoğraf yükleme.
 builder.Services.AddScoped<IPetPhotoStorage, PetPhotoStorage>();
 
 // ---------- ASP.NET Core Identity ----------
