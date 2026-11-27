@@ -1,6 +1,9 @@
-@model VaccinationSaveDto
+﻿@model VaccinationSaveDto
 @* Aşı kaydı formu — Admin ve Veteriner panelinde ortak. *@
 @{
+    // Bu ortak görünüm Admin/Veteriner/Üye panellerinden çağrılır. Views/Shared altında olduğu için
+    // Area'nın _ViewStart dosyası uygulanmaz; panel düzeni (kenar menü) burada açıkça seçilir.
+    Layout = "_PanelLayout";
     var id = ViewData["Id"] as int?;
     var today = DateOnly.FromDateTime(DateTime.Today).ToString("yyyy-MM-dd");
 }

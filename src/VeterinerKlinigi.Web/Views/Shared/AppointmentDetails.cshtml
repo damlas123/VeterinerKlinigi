@@ -1,10 +1,13 @@
-@model AppointmentDetailDto
+﻿@model AppointmentDetailDto
 @*
     Randevu detayı — üç panelde ortak görünüm (Admin, Veteriner, Üye).
     Hangi düğmelerin görüneceğine iş katmanı karar verir (CanApprove, CanCancel ...);
     düğmeler bulunulan panelin Appointments controller'ına gönderilir.
 *@
 @{
+    // Bu ortak görünüm Admin/Veteriner/Üye panellerinden çağrılır. Views/Shared altında olduğu için
+    // Area'nın _ViewStart dosyası uygulanmaz; panel düzeni (kenar menü) burada açıkça seçilir.
+    Layout = "_PanelLayout";
     var a = Model.Appointment;
     var area = ViewContext.RouteData.Values["area"] as string;
     ViewData["Title"] = $"Randevu #{a.Id}";

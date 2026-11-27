@@ -1,6 +1,9 @@
-@model AvailabilitySaveDto
+﻿@model AvailabilitySaveDto
 @* Müsaitlik formu — Admin ve Veteriner panelinde ortak. Form, bulunulan panelin Availability controller'ına gönderilir. *@
 @{
+    // Bu ortak görünüm Admin/Veteriner/Üye panellerinden çağrılır. Views/Shared altında olduğu için
+    // Area'nın _ViewStart dosyası uygulanmaz; panel düzeni (kenar menü) burada açıkça seçilir.
+    Layout = "_PanelLayout";
     var id = ViewData["Id"] as int?;
     var days = (List<SelectListItem>)ViewData["Days"]!;
 }

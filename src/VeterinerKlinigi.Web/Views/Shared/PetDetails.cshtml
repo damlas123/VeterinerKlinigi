@@ -1,9 +1,12 @@
-@model PetDetailDto
+﻿@model PetDetailDto
 @*
     Evcil hayvanın sağlık geçmişi — üç panelde ortak görünüm:
     Üye (kendi hayvanı), Veteriner (hastası), Admin (tüm hayvanlar).
 *@
 @{
+    // Bu ortak görünüm Admin/Veteriner/Üye panellerinden çağrılır. Views/Shared altında olduğu için
+    // Area'nın _ViewStart dosyası uygulanmaz; panel düzeni (kenar menü) burada açıkça seçilir.
+    Layout = "_PanelLayout";
     var p = Model.Pet;
     var area = ViewContext.RouteData.Values["area"] as string;
     ViewData["Title"] = p.Name;

@@ -1,9 +1,12 @@
-@model DeleteConfirmViewModel
+﻿@model DeleteConfirmViewModel
 @*
     Tüm modüller için ortak silme onay sayfası. Form, bulunulan controller'ın
     "Delete" (POST) action'ına gönderilir; anti-forgery token otomatik eklenir.
 *@
 @{
+    // Bu ortak görünüm Admin/Veteriner/Üye panellerinden çağrılır. Views/Shared altında olduğu için
+    // Area'nın _ViewStart dosyası uygulanmaz; panel düzeni (kenar menü) burada açıkça seçilir.
+    Layout = "_PanelLayout";
     ViewData["Title"] = Model.Title;
 }
 
