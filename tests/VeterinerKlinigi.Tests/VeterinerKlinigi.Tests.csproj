@@ -1,0 +1,35 @@
+<!--
+  VeterinerKlinigi.Tests
+  İş kurallarının otomatik testleri (xUnit).
+  - AppointmentRulesTests: çakışma / uygun saat hesaplarının saf fonksiyon testleri
+  - AppointmentManagerTests, AccessScopeTests: iş servisleri, gerçek bir ilişkisel veritabanı
+    (SQLite in-memory) üzerinde, uygulamadaki AppDbContext ve Fluent API ayarlarıyla çalıştırılır.
+  Çalıştırma: dotnet test
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\VeterinerKlinigi.Business\VeterinerKlinigi.Business.csproj" />
+    <ProjectReference Include="..\..\src\VeterinerKlinigi.Data\VeterinerKlinigi.Data.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -12,4 +12,7 @@
     <Project Path="src/VeterinerKlinigi.Data/VeterinerKlinigi.Data.csproj" />
     <Project Path="src/VeterinerKlinigi.Entities/VeterinerKlinigi.Entities.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/VeterinerKlinigi.Tests/VeterinerKlinigi.Tests.csproj" />
+  </Folder>
 </Solution>
