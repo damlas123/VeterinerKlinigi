@@ -32,6 +32,7 @@ Aynı iş kuralları üç farklı kanaldan kullanılır ve **tek bir yerde (Busi
 | API | REST, DTO, ProblemDetails, OpenAPI dokümanı (`/openapi/v1.json`, geliştirme ortamında) |
 | MCP | `ModelContextProtocol.AspNetCore` 2.4.0 (resmî C# SDK), HTTP transport, `/mcp` |
 | Arayüz | Bootstrap 5, Bootstrap Icons, jQuery, jQuery Validation (unobtrusive), Chart.js |
+| Test | xUnit, EF Core SQLite (in-memory) |
 | Mimari | Katmanlı mimari, Dependency Injection, Repository + Unit of Work, Central Package Management |
 
 ## Proje yapısı
@@ -42,7 +43,9 @@ VeterinerKlinigi.slnx
 ├── src/VeterinerKlinigi.Data       → AppDbContext, Fluent API ayarları, Migrations, Repository/UnitOfWork, Seed
 ├── src/VeterinerKlinigi.Business   → Abstract (I*Service), Concrete (*Manager), Dtos, Rules, Security (AccessScopes)
 ├── src/VeterinerKlinigi.API        → REST controller'ları, JWT üretimi, yetkilendirme politikaları
-└── src/VeterinerKlinigi.Web        → Çalışan proje: MVC, Areas (Admin/Veterinarian/Member), MCP araçları, Program.cs
+├── src/VeterinerKlinigi.Web        → Çalışan proje: MVC, Areas (Admin/Veterinarian/Member), MCP araçları, Program.cs
+├── tests/VeterinerKlinigi.Tests    → xUnit testleri: randevu kuralları, çakışma, sahiplik (yetki) kontrolleri
+└── docs/                           → Gereksinim analizi, mimari, geliştirme planı, ekran görüntüleri
 ```
 
 Katman bağımlılıkları tek yönlüdür: `Web → API → Business → Data → Entities`. Ayrıntı: [docs/01](docs/01-gereksinim-analizi-ve-mimari.md), [docs/02](docs/02-solution-ve-proje-yapisi.md), [docs/03](docs/03-entity-ve-dbcontext.md).
@@ -86,6 +89,31 @@ Farklı bir SQL Server kullanılacaksa bağlantı dizesi de user-secrets ile ver
 `dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=...;Database=VeterinerKlinigiDb;Trusted_Connection=True;TrustServerCertificate=True" --project src/VeterinerKlinigi.Web`
 
 Migration'ı elle uygulamak isterseniz: Package Manager Console → Default project **VeterinerKlinigi.Data** → `Update-Database`.
+
+### Ortam değişkenleri ve ayarlar
+
+Ayarlar `src/VeterinerKlinigi.Web/appsettings.json` dosyasındadır. **Gizli değerler depoya konmaz**; user-secrets veya ortam değişkeni
+ile verilir (ortam değişkeninde `:` yerine `__` yazılır, ör. `Jwt__Key`).
+
+| Ayar | Varsayılan | Açıklama |
+|---|---|---|
+| `ConnectionStrings:DefaultConnection` | LocalDB, `VeterinerKlinigiDb` | SQL Server bağlantı dizesi. Parola içeren dize yalnızca user-secrets / ortam değişkeni ile verilmelidir. |
+| `Jwt:Key` | *(yok)* | JWT imzalama anahtarı, en az 32 karakter. Geliştirmede tanımlı değilse geçici anahtar üretilir; üretimde **zorunludur**. |
+| `Jwt:Issuer`, `Jwt:Audience`, `Jwt:ExpiryMinutes` | `VeterinerKlinigi`, `VeterinerKlinigi.Clients`, `120` | Token ayarları |
+| `Seed:AdminEmail`, `Seed:AdminPassword` | `b241210351@sakarya.edu.tr`, `sau` | İlk açılışta oluşturulan admin hesabı (ödev gereği) |
+| `Seed:CreateDemoData`, `Seed:DemoPassword` | `true`, `Demo123!` | Örnek klinik, veteriner, üye ve randevu verileri |
+| `Appointment:SlotIntervalMinutes`, `Appointment:MaxDaysAhead` | `15`, `60` | Randevu saat aralığı ve en fazla kaç gün ileriye randevu alınabileceği |
+| `ASPNETCORE_ENVIRONMENT` | `Development` (launchSettings) | `Development` dışında hata ayrıntısı gizlenir, HSTS açılır, OpenAPI dokümanı kapanır. |
+
+### Komut satırından çalıştırma
+
+```powershell
+dotnet restore
+dotnet run --project src/VeterinerKlinigi.Web --launch-profile http   # http://localhost:5080
+```
+
+Veritabanı ilk çalıştırmada otomatik oluşturulur. Elle migration uygulamak için (`dotnet tool install --global dotnet-ef` gerekir):
+`dotnet ef database update --project src/VeterinerKlinigi.Data --startup-project src/VeterinerKlinigi.Web`
 
 ## Demo hesapları
 
@@ -195,7 +223,16 @@ Araçlar REST API ile **aynı servisleri** (`IAppointmentService`, `IVaccination
 4. **Tools → List Tools** ile altı aracı görün; örn. `hizmet_listesi`, ardından `uygun_saatler` (`serviceId=1`, `date=2026-11-26`) ve `randevu_olustur`'u çalıştırın.
    Oluşan randevu, web sitesinde üye panelinde ve veteriner panelinde **Bekliyor** olarak görünür.
 
-Token olmadan `/mcp` çağrılırsa **401** döner.
+Token olmadan `/mcp` çağrılırsa **401** döner. Token'ın sahibi admin tarafından kilitlenirse token süresi dolmadan
+REST API ve MCP istekleri de hemen **401** almaya başlar (her istekte hesap durumu kontrol edilir).
+
+> MCP Inspector'ın yeni (2.x) arayüzünde: **Servers → Add Servers** ile `Streamable HTTP` ve `http://localhost:5080/mcp` adresli
+> bir sunucu ekleyin, **Settings → Custom Headers** bölümüne `Authorization: Bearer <token>` yazın, ardından sunucunun anahtarını
+> açıp **Tools** sekmesine geçin.
+
+**MCP Inspector'dan `asi_takvimi` aracının çağrılması** (üye hesabıyla, `hayvanAdi = Pamuk`):
+
+![MCP Inspector - asi_takvimi](docs/ekran-goruntuleri/12-mcp-inspector-asi-takvimi.png)
 
 ## Güvenlik ve doğrulama
 
@@ -203,11 +240,27 @@ Token olmadan `/mcp` çağrılırsa **401** döner.
 - Tüm formlarda **anti-forgery token** (CSRF) otomatik doğrulanır; çerez `HttpOnly` + `SameSite=Lax`.
 - Doğrulama hem istemcide (jQuery Validation, Türkçe ondalık desteği) hem sunucuda (DataAnnotations + iş kuralları) yapılır.
 - Fotoğraf yükleme: yalnızca JPG/PNG/WEBP, en fazla 2 MB, dosya imzası (magic bytes) kontrolü, rastgele (GUID) dosya adı.
+- JWT her istekte doğrulanırken hesabın hâlâ var olduğu ve kilitli olmadığı kontrol edilir (kilitlenen kullanıcının token'ı hemen geçersiz olur).
 - Razor çıktıları otomatik HTML-encode edilir (XSS); jQuery ile eklenen metinlerde `.text()` kullanılır.
 - Güvenlik başlıkları: `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`; üretimde HSTS.
 - JWT anahtarı ve özel bağlantı dizeleri depoda tutulmaz (user-secrets).
 
-## Test senaryoları
+## Testler
+
+Otomatik testler `tests/VeterinerKlinigi.Tests` projesindedir (xUnit). İş servisleri, uygulamanın kendi `AppDbContext`'i ve
+Fluent API ayarlarıyla **SQLite in-memory** veritabanı üzerinde çalıştırılır; SQL Server gerekmez.
+
+```powershell
+dotnet test
+```
+
+| Test sınıfı | Neyi doğrular? |
+|---|---|
+| `AppointmentRulesTests` | Zaman aralığı çakışması (10:00-10:30 varken 10:15 çakışır, 10:30 çakışmaz), müsaitlik aralığına sığma, 15 dk hizalama, uygun saat üretimi |
+| `AppointmentManagerTests` | Randevunun *Bekliyor* olarak oluşması, süre/ücretin hizmetten kopyalanması, hizmet süresiyle çakışma (409), müsaitlik ve klinik saatleri dışı, geçmiş tarih, başka üyenin hayvanı (404), veterinerin randevu açamaması, onay/ret/iptal yetkileri, reddedilen randevunun saati boşaltması, uygun saat listesi |
+| `AccessScopeTests` | Üyenin sadece kendi hayvanlarını ve aşı takvimini görmesi, id değiştirerek başkasının kaydına erişememesi, veterinerin sadece kendi hastalarını görmesi |
+
+### Elle test senaryoları
 
 | # | Senaryo | Beklenen |
 |---|---|---|
@@ -224,8 +277,26 @@ Token olmadan `/mcp` çağrılırsa **401** döner.
 
 ## Ekran görüntüleri
 
-Ekran görüntüleri `docs/ekran-goruntuleri/` klasörüne eklenecektir: ana sayfa, giriş, üye dashboard, randevu sihirbazı,
-veteriner dashboard, muayene notu, admin dashboard, ciro raporu, MCP Inspector.
+| | |
+|---|---|
+| **Ana sayfa** ![Ana sayfa](docs/ekran-goruntuleri/01-ana-sayfa.png) | **Giriş** ![Giriş](docs/ekran-goruntuleri/02-giris.png) |
+| **Üye paneli** ![Üye dashboard](docs/ekran-goruntuleri/03-uye-dashboard.png) | **Evcil hayvanlarım** ![Evcil hayvanlar](docs/ekran-goruntuleri/04-evcil-hayvanlarim.png) |
+| **Randevu sihirbazı** (uygun saatler API'den canlı gelir) ![Randevu sihirbazı](docs/ekran-goruntuleri/05-randevu-sihirbazi.png) | **Aşı takvimi** ![Aşı takvimi](docs/ekran-goruntuleri/06-asi-takvimi.png) |
+| **Veteriner paneli** ![Veteriner dashboard](docs/ekran-goruntuleri/07-veteriner-dashboard.png) | **Veteriner randevuları** ![Veteriner randevuları](docs/ekran-goruntuleri/08-veteriner-randevular.png) |
+| **Yönetim paneli** ![Admin dashboard](docs/ekran-goruntuleri/09-admin-dashboard.png) | **Ciro raporu** (REST API + LINQ) ![Ciro raporu](docs/ekran-goruntuleri/10-ciro-raporu.png) |
+
+**Mobil görünüm:** tablolar küçük ekranda kart listesine dönüşür.
+
+<img src="docs/ekran-goruntuleri/11-mobil-randevular.png" alt="Mobil randevu listesi" width="300" />
+
+### Arayüz özellikleri
+
+- Role göre kenar menülü panel düzeni (mobilde yatay kayan menü), istatistik kartları ve Chart.js grafikleri
+- İşlem sonuçları sağ üstte **toast bildirimi**; silme/iptal/kilitleme gibi geri alınamaz işlemler için **onay penceresi (modal)**
+- Listelerde anında **hızlı arama**, randevu listelerinde durum/klinik/hekim/tarih filtreleri
+- Form gönderilirken buton kilitlenir ("İşleniyor..."), çift tıklamayla iki kayıt oluşmaz
+- Boş durum (kayıt yok), hata (404/403) ve yükleniyor durumları için ayrı tasarımlar
+- İstemci tarafı doğrulama mesajları Türkçe; sunucu tarafı kurallarla aynı
 
 ## Geliştirme süreci
 
