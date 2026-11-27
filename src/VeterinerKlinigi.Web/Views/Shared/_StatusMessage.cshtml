@@ -1,17 +1,28 @@
-@* İşlem sonrası mesajlar (controller'da ShowSuccess / ShowError ile TempData'ya yazılır). *@
-@if (TempData["Success"] is string success)
-{
-    <div class="alert alert-success alert-dismissible fade show d-flex align-items-start gap-2" role="alert">
-        <i class="bi bi-check-circle-fill"></i>
-        <div>@success</div>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
-    </div>
-}
-@if (TempData["Error"] is string error)
-{
-    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-start gap-2" role="alert">
-        <i class="bi bi-exclamation-triangle-fill"></i>
-        <div>@error</div>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
-    </div>
-}
+@*
+    İşlem sonrası mesajlar (controller'da ShowSuccess / ShowError ile TempData'ya yazılır).
+    _Layout içinde bir kez çağrılır ve sağ üst köşede Bootstrap "toast" bildirimi olarak gösterilir.
+    Başarı mesajları 5 saniye sonra kendiliğinden kapanır; hata mesajları kullanıcı okuyup kapatana kadar kalır.
+    site.js'teki pvToast() fonksiyonu da sayfa yenilenmeden (AJAX sonrası) aynı kutuya bildirim ekler.
+*@
+<div id="pvToasts" class="toast-container position-fixed top-0 end-0 p-3 pv-toasts" aria-live="polite" aria-atomic="true">
+    @if (TempData["Success"] is string success)
+    {
+        <div class="toast pv-toast pv-toast-success" role="status" data-bs-delay="5000">
+            <div class="d-flex align-items-start gap-2 p-3">
+                <i class="bi bi-check-circle-fill pv-toast-icon"></i>
+                <div class="toast-body p-0 flex-grow-1">@success</div>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Kapat"></button>
+            </div>
+        </div>
+    }
+    @if (TempData["Error"] is string error)
+    {
+        <div class="toast pv-toast pv-toast-error" role="alert" data-bs-autohide="false">
+            <div class="d-flex align-items-start gap-2 p-3">
+                <i class="bi bi-exclamation-triangle-fill pv-toast-icon"></i>
+                <div class="toast-body p-0 flex-grow-1">@error</div>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Kapat"></button>
+            </div>
+        </div>
+    }
+</div>

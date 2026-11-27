@@ -12,10 +12,10 @@
 </div>
 
 <div class="row g-3 mb-4">
-    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Bugünkü randevular", Model.TodayCount.ToString(), "bi-calendar-day", "pv-icon-green", Url.Action("Index", "Appointments", new { From = DateTime.Today.ToString("yyyy-MM-dd"), To = DateTime.Today.ToString("yyyy-MM-dd") }))' /></div>
-    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Onay bekleyen", Model.PendingCount.ToString(), "bi-hourglass-split", "pv-icon-peach", Url.Action("Index", "Appointments", new { Status = "Pending" }))' /></div>
-    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Bu ay tamamlanan", Model.CompletedThisMonth.ToString(), "bi-clipboard2-check", "pv-icon-sky", Url.Action("Index", "ExaminationNotes"))' /></div>
-    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Hastalarım", Model.PatientCount.ToString(), "bi-heart", "pv-icon-lavender", Url.Action("Index", "Patients"))' /></div>
+    <div class="col-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Bugünkü randevular", Model.TodayCount.ToString(), "bi-calendar-day", "pv-icon-green", Url.Action("Index", "Appointments", new { From = DateTime.Today.ToString("yyyy-MM-dd"), To = DateTime.Today.ToString("yyyy-MM-dd") }))' /></div>
+    <div class="col-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Onay bekleyen", Model.PendingCount.ToString(), "bi-hourglass-split", "pv-icon-peach", Url.Action("Index", "Appointments", new { Status = "Pending" }))' /></div>
+    <div class="col-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Bu ay tamamlanan", Model.CompletedThisMonth.ToString(), "bi-clipboard2-check", "pv-icon-sky", Url.Action("Index", "ExaminationNotes"))' /></div>
+    <div class="col-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Hastalarım", Model.PatientCount.ToString(), "bi-heart", "pv-icon-lavender", Url.Action("Index", "Patients"))' /></div>
 </div>
 
 <div class="row g-4 mb-4">

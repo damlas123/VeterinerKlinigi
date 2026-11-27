@@ -1,4 +1,4 @@
-@model List<ClinicDto>
+﻿@model List<ClinicDto>
 @{
     ViewData["Title"] = "Klinikler";
 }
@@ -13,8 +13,14 @@
 
 <div class="card pv-card">
     <div class="card-body">
+        <div class="pv-table-tools mb-3">
+            <div class="pv-search">
+                <i class="bi bi-search"></i>
+                <input type="search" class="form-control" placeholder="Klinik ara (ad, adres, telefon)" aria-label="Klinik ara (ad, adres, telefon)" data-table-search="#clinicTable" />
+            </div>
+        </div>
         <div class="table-responsive">
-            <table class="table pv-table align-middle mb-0">
+            <table class="table pv-table align-middle mb-0" id="clinicTable">
                 <thead>
                     <tr><th>Klinik</th><th>İletişim</th><th>Çalışma saatleri</th><th class="text-center">Veteriner</th><th class="text-center">Hizmet</th><th>Durum</th><th></th></tr>
                 </thead>

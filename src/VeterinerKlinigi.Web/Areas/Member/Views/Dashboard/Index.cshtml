@@ -14,10 +14,10 @@
 </div>
 
 <div class="row g-3 mb-4">
-    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Evcil hayvanlarım", Model.PetCount.ToString(), "bi-heart", "pv-icon-green", Url.Action("Index", "Pets"))' /></div>
-    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Yaklaşan randevu", Model.UpcomingAppointmentCount.ToString(), "bi-calendar-check", "pv-icon-sky", Url.Action("Index", "Appointments"))' /></div>
-    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Onay bekleyen", Model.PendingAppointmentCount.ToString(), "bi-hourglass-split", "pv-icon-peach", Url.Action("Index", "Appointments", new { Status = "Pending" }))' /></div>
-    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Yaklaşan / geciken aşı", Model.DueVaccinationCount.ToString(), "bi-capsule", "pv-icon-lavender", Url.Action("Index", "Vaccinations"))' /></div>
+    <div class="col-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Evcil hayvanlarım", Model.PetCount.ToString(), "bi-heart", "pv-icon-green", Url.Action("Index", "Pets"))' /></div>
+    <div class="col-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Yaklaşan randevu", Model.UpcomingAppointmentCount.ToString(), "bi-calendar-check", "pv-icon-sky", Url.Action("Index", "Appointments"))' /></div>
+    <div class="col-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Onay bekleyen", Model.PendingAppointmentCount.ToString(), "bi-hourglass-split", "pv-icon-peach", Url.Action("Index", "Appointments", new { Status = "Pending" }))' /></div>
+    <div class="col-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Yaklaşan / geciken aşı", Model.DueVaccinationCount.ToString(), "bi-capsule", "pv-icon-lavender", Url.Action("Index", "Vaccinations"))' /></div>
 </div>
 
 @if (Model.PetCount == 0)

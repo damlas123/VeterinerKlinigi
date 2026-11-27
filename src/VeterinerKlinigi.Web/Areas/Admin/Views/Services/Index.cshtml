@@ -1,4 +1,4 @@
-@model List<ServiceDto>
+﻿@model List<ServiceDto>
 @{
     ViewData["Title"] = "Hizmetler";
     var clinics = (List<SelectListItem>)ViewData["Clinics"]!;
@@ -32,8 +32,14 @@
         }
         else
         {
-            <div class="table-responsive">
-                <table class="table pv-table align-middle mb-0">
+            <div class="pv-table-tools mb-3">
+            <div class="pv-search">
+                <i class="bi bi-search"></i>
+                <input type="search" class="form-control" placeholder="Hizmet ara" aria-label="Hizmet ara" data-table-search="#serviceTable" />
+            </div>
+        </div>
+        <div class="table-responsive">
+                <table class="table pv-table align-middle mb-0" id="serviceTable">
                     <thead><tr><th>Hizmet</th><th>Klinik</th><th class="text-center">Süre</th><th class="text-end">Ücret</th><th class="text-center">Hekim</th><th>Durum</th><th></th></tr></thead>
                     <tbody>
                         @foreach (var s in Model)

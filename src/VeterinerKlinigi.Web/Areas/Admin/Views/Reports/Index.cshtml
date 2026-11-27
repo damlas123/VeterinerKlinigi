@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewData["Title"] = "Ciro raporu";
     var clinics = (List<SelectListItem>)ViewData["Clinics"]!;
 }
@@ -108,6 +108,7 @@
                         $cards.eq(1).text(report.totalCompleted);
                         $cards.eq(2).text(money.format(report.totalRevenue));
 
+                        window.pvLabelTables('#reportRows');
                         PatiCharts.revenue('revenueChart', report.items);
                     })
                     .fail(function (xhr) {

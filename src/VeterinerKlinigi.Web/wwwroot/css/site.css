@@ -1,4 +1,4 @@
-/* =====================================================================
+﻿/* =====================================================================
    PatiVet — Ortak tema
    Renk paleti: beyaz, açık yeşil ve pastel tonlar.
    Bootstrap 5'in CSS değişkenlerini (--bs-*) ezerek, Bootstrap bileşenlerinin
@@ -526,3 +526,187 @@ div.pv-pet-cover.pv-pet-placeholder {
 .pv-slot.active { background-color: var(--pv-primary); border-color: var(--pv-primary); color: #ffffff; }
 
 .pv-service-picker { background-color: #fbfdfc; }
+
+/* =====================================================================
+   ARAYÜZ İYİLEŞTİRMELERİ (v2)
+   Tipografi, bildirimler (toast), onay penceresi, tablo araması,
+   mobil uyumlu tablolar ve panel düzeni.
+   ===================================================================== */
+
+/* ---------- Tipografi: tutarlı başlık ağırlıkları ve rakam hizası ---------- */
+body {
+    font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, .h1, h2, .h2, h3, .h3 {
+    font-weight: 700;
+    letter-spacing: -0.015em;
+}
+
+h4, .h4, h5, .h5, h6, .h6 {
+    font-weight: 600;
+}
+
+.pv-stat .fs-4,
+.pv-table td.text-end,
+.pv-table td.text-center {
+    font-variant-numeric: tabular-nums; /* sayılar alt alta hizalı dursun */
+}
+
+/* ---------- Butonlar: yumuşak geçiş ve basılma geri bildirimi ---------- */
+.btn {
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
+}
+
+.btn:active:not(:disabled) {
+    transform: translateY(1px);
+}
+
+.btn:disabled .spinner-border {
+    vertical-align: -0.15em;
+}
+
+/* ---------- Bildirimler (toast) ---------- */
+.pv-toasts {
+    z-index: 1090; /* sabit üst menünün de üstünde */
+    margin-top: 4.25rem;
+}
+
+.pv-toast {
+    width: min(24rem, calc(100vw - 2rem));
+    border: 1px solid var(--pv-border);
+    border-left-width: 4px;
+    border-radius: 0.9rem;
+    background-color: #ffffff;
+    box-shadow: 0 1rem 2.5rem rgba(35, 66, 58, 0.14);
+}
+
+.pv-toast .toast-body { color: var(--pv-text); }
+.pv-toast-icon { font-size: 1.15rem; line-height: 1.3; }
+.pv-toast-success { border-left-color: var(--pv-primary); }
+.pv-toast-success .pv-toast-icon { color: var(--pv-primary); }
+.pv-toast-error { border-left-color: #d64545; }
+.pv-toast-error .pv-toast-icon { color: #d64545; }
+
+/* ---------- Onay penceresi (modal) ---------- */
+.pv-modal {
+    border: 0;
+    border-radius: 1.25rem;
+    box-shadow: 0 1.5rem 3rem rgba(35, 66, 58, 0.2);
+}
+
+.modal-backdrop.show { opacity: 0.35; }
+
+/* ---------- Tablo hızlı arama ---------- */
+.pv-search {
+    position: relative;
+    max-width: 22rem;
+}
+
+.pv-search > i {
+    position: absolute;
+    left: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c8a80;
+    pointer-events: none;
+}
+
+.pv-search .form-control {
+    padding-left: 2.4rem;
+    border-radius: 2rem;
+    background-color: #fbfdfc;
+}
+
+/* ---------- Panel düzeni ---------- */
+.pv-side-nav .nav-link i {
+    font-size: 1.05rem;
+    width: 1.25rem;
+    text-align: center;
+}
+
+.pv-side-nav .nav-link.active {
+    font-weight: 600;
+    box-shadow: inset 3px 0 0 var(--pv-primary);
+}
+
+@media (max-width: 767.98px) {
+    .pv-sidebar { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
+    .pv-side-nav { gap: 0.25rem; scrollbar-width: none; }
+    .pv-side-nav::-webkit-scrollbar { display: none; }
+    .pv-side-nav .nav-link.active { box-shadow: inset 0 -3px 0 var(--pv-primary); }
+    .pv-panel-content { padding-top: 1.25rem !important; }
+}
+
+/* ---------- İstatistik kartları: mobilde 2 sütun, daha kompakt ---------- */
+@media (max-width: 575.98px) {
+    .pv-stat .card-body {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 0.5rem !important;
+        padding: 0.85rem;
+    }
+
+    .pv-stat .pv-icon { width: 2.25rem; height: 2.25rem; font-size: 1.05rem; border-radius: 0.7rem; }
+    .pv-stat .fs-4 { font-size: 1.25rem !important; }
+}
+
+/* ---------- Mobil tablolar: her satır bir kart ----------
+   site.js her hücreye sütun başlığını data-label olarak yazar. */
+@media (max-width: 767.98px) {
+    .pv-table thead { display: none; }
+
+    .pv-table,
+    .pv-table tbody,
+    .pv-table tfoot,
+    .pv-table tr,
+    .pv-table td,
+    .pv-table tfoot th {
+        display: block;
+        width: 100%;
+    }
+
+    .pv-table tbody tr,
+    .pv-table tfoot tr {
+        border: 1px solid var(--pv-border);
+        border-radius: 0.9rem;
+        padding: 0.35rem 0.85rem;
+        margin-bottom: 0.75rem;
+        background-color: #ffffff;
+    }
+
+    .pv-table tbody tr:hover { background-color: #ffffff; }
+
+    .pv-table td,
+    .pv-table tfoot th {
+        text-align: right !important;
+        border-bottom: 1px dashed var(--pv-border);
+        padding: 0.55rem 0;
+        overflow: hidden; /* float edilen etiketi kapsasın */
+    }
+
+    .pv-table tr > td:last-child { border-bottom: 0; }
+
+    /* Sütun başlığı solda, değer(ler) sağda alt alta */
+    .pv-table td[data-label]::before {
+        content: attr(data-label);
+        float: left;
+        margin-right: 1rem;
+        padding-top: 0.15rem;
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #6c8a80;
+        text-align: left;
+    }
+
+    /* Hücre içindeki yatay gruplar (avatar + ad, butonlar) sağa yaslansın */
+    .pv-table td .d-flex { justify-content: flex-end; }
+
+    .pv-table td.pv-empty,
+    .pv-table td[colspan] { display: block; text-align: center !important; }
+
+    .table-responsive:has(> .pv-table) { overflow: visible; }
+}

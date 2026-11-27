@@ -12,14 +12,14 @@
 </div>
 
 <div class="row g-3 mb-4">
-    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Bugünkü randevular", Model.TodayAppointmentCount.ToString(), "bi-calendar-day", "pv-icon-green", Url.Action("Index", "Appointments", new { From = DateTime.Today.ToString("yyyy-MM-dd"), To = DateTime.Today.ToString("yyyy-MM-dd") }))' /></div>
-    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Onay bekleyen", Model.PendingAppointmentCount.ToString(), "bi-hourglass-split", "pv-icon-peach", Url.Action("Index", "Appointments", new { Status = "Pending" }))' /></div>
-    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Bu ayki ciro", Model.MonthRevenue.ToString("C0"), "bi-cash-coin", "pv-icon-sky", Url.Action("Index", "Reports"), "Tamamlanan randevular")' /></div>
-    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Evcil hayvan", Model.PetCount.ToString(), "bi-heart", "pv-icon-lavender", Url.Action("Index", "Pets"))' /></div>
-    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Üye", Model.MemberCount.ToString(), "bi-people", "pv-icon-green", Url.Action("Index", "Owners", new { role = RoleNames.Member }))' /></div>
-    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Veteriner", Model.VeterinarianCount.ToString(), "bi-person-badge", "pv-icon-peach", Url.Action("Index", "Veterinarians"))' /></div>
-    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Klinik", Model.ClinicCount.ToString(), "bi-hospital", "pv-icon-sky", Url.Action("Index", "Clinics"))' /></div>
-    <div class="col-sm-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Hizmet", Model.ServiceCount.ToString(), "bi-clipboard2-pulse", "pv-icon-lavender", Url.Action("Index", "Services"))' /></div>
+    <div class="col-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Bugünkü randevular", Model.TodayAppointmentCount.ToString(), "bi-calendar-day", "pv-icon-green", Url.Action("Index", "Appointments", new { From = DateTime.Today.ToString("yyyy-MM-dd"), To = DateTime.Today.ToString("yyyy-MM-dd") }))' /></div>
+    <div class="col-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Onay bekleyen", Model.PendingAppointmentCount.ToString(), "bi-hourglass-split", "pv-icon-peach", Url.Action("Index", "Appointments", new { Status = "Pending" }))' /></div>
+    <div class="col-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Bu ayki ciro", Model.MonthRevenue.ToString("C0"), "bi-cash-coin", "pv-icon-sky", Url.Action("Index", "Reports"), "Tamamlanan randevular")' /></div>
+    <div class="col-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Evcil hayvan", Model.PetCount.ToString(), "bi-heart", "pv-icon-lavender", Url.Action("Index", "Pets"))' /></div>
+    <div class="col-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Üye", Model.MemberCount.ToString(), "bi-people", "pv-icon-green", Url.Action("Index", "Owners", new { role = RoleNames.Member }))' /></div>
+    <div class="col-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Veteriner", Model.VeterinarianCount.ToString(), "bi-person-badge", "pv-icon-peach", Url.Action("Index", "Veterinarians"))' /></div>
+    <div class="col-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Klinik", Model.ClinicCount.ToString(), "bi-hospital", "pv-icon-sky", Url.Action("Index", "Clinics"))' /></div>
+    <div class="col-6 col-xl-3"><partial name="_StatCard" model='new StatCardModel("Hizmet", Model.ServiceCount.ToString(), "bi-clipboard2-pulse", "pv-icon-lavender", Url.Action("Index", "Services"))' /></div>
 </div>
 
 @* Grafik verileri REST API'den (GET /api/reports/dashboard) jQuery ile alınır — oturum çerezi kullanılır. *@

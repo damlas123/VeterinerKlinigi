@@ -1,4 +1,4 @@
-@model IEnumerable<VaccinationDto>
+﻿@model IEnumerable<VaccinationDto>
 @*
     Aşı tablosu. ViewData["CanManage"] true ise düzenle/sil bağlantıları gösterilir
     (bulunulan Area'nın Vaccinations controller'ına gider: Admin veya Veteriner paneli).
@@ -7,6 +7,7 @@
     var canManage = ViewData["CanManage"] as bool? ?? false;
     var showPet = ViewData["ShowPet"] as bool? ?? false;
     var list = Model.ToList();
+    var tableId = "tbl" + Guid.NewGuid().ToString("N")[..8];
 }
 @if (list.Count == 0)
 {
@@ -17,8 +18,17 @@
 }
 else
 {
+    if (list.Count > 5)
+    {
+        <div class="pv-table-tools mb-3">
+            <div class="pv-search">
+                <i class="bi bi-search"></i>
+                <input type="search" class="form-control" placeholder="Listede ara (hayvan, aşı adı)" aria-label="Listede ara" data-table-search="#@tableId" />
+            </div>
+        </div>
+    }
     <div class="table-responsive">
-        <table class="table pv-table align-middle mb-0">
+        <table class="table pv-table align-middle mb-0" id="@tableId">
             <thead>
                 <tr>
                     @if (showPet) { <th>Evcil hayvan</th> }

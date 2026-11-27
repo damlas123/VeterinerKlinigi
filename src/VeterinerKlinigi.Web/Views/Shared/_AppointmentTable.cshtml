@@ -1,4 +1,4 @@
-@model IEnumerable<AppointmentDto>
+﻿@model IEnumerable<AppointmentDto>
 @*
     Randevu tablosu (üç panelde ortak). Detay bağlantısı, bulunulan Area'nın
     Appointments/Details sayfasına gider.
@@ -8,6 +8,7 @@
     var showOwner = ViewData["ShowOwner"] as bool? ?? false;
     var showVet = ViewData["ShowVet"] as bool? ?? true;
     var list = Model.ToList();
+    var tableId = "tbl" + Guid.NewGuid().ToString("N")[..8];
 }
 @if (list.Count == 0)
 {
@@ -18,8 +19,17 @@
 }
 else
 {
+    if (list.Count > 5)
+    {
+        <div class="pv-table-tools mb-3">
+            <div class="pv-search">
+                <i class="bi bi-search"></i>
+                <input type="search" class="form-control" placeholder="Listede ara (hayvan, sahip, hizmet, hekim)" aria-label="Listede ara" data-table-search="#@tableId" />
+            </div>
+        </div>
+    }
     <div class="table-responsive">
-        <table class="table pv-table align-middle mb-0">
+        <table class="table pv-table align-middle mb-0" id="@tableId">
             <thead>
                 <tr>
                     <th>Tarih / saat</th>

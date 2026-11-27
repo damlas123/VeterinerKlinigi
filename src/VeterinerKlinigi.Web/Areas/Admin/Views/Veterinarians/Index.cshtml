@@ -1,4 +1,4 @@
-@model List<VeterinarianDto>
+﻿@model List<VeterinarianDto>
 @{
     ViewData["Title"] = "Veterinerler";
 }
@@ -19,8 +19,14 @@
         }
         else
         {
-            <div class="table-responsive">
-                <table class="table pv-table align-middle mb-0">
+            <div class="pv-table-tools mb-3">
+            <div class="pv-search">
+                <i class="bi bi-search"></i>
+                <input type="search" class="form-control" placeholder="Veteriner ara (ad, uzmanlık, klinik)" aria-label="Veteriner ara (ad, uzmanlık, klinik)" data-table-search="#vetTable" />
+            </div>
+        </div>
+        <div class="table-responsive">
+                <table class="table pv-table align-middle mb-0" id="vetTable">
                     <thead><tr><th>Hekim</th><th>Klinik</th><th>Uzmanlık</th><th>Hizmetler</th><th>Durum</th><th></th></tr></thead>
                     <tbody>
                         @foreach (var v in Model)
