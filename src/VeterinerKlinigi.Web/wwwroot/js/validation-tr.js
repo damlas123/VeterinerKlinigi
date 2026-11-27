@@ -9,6 +9,13 @@ if ($.validator) {
         return this.optional(element) || /^-?\d+(?:[.,]\d+)?$/.test(value);
     };
     $.validator.methods.range = function (value, element, param) {
+        // Onay kutusu: [Range(typeof(bool), "true", "true")] → kutu işaretli olmalı.
+        // jQuery Validate sınır değerlerini Number() ile sayıya çevirdiği için "true" NaN oluyor ve
+        // işaretli kutu da hatalı sayılıyordu; bu yüzden beklenen değer doğrudan data-val özniteliğinden okunur.
+        if (element.type === "checkbox") {
+            var expected = String(element.getAttribute("data-val-range-min")).toLowerCase() === "true";
+            return element.checked === expected;
+        }
         var number = parseFloat(String(value).replace(",", "."));
         return this.optional(element) || (number >= param[0] && number <= param[1]);
     };
