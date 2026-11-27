@@ -710,3 +710,23 @@ h4, .h4, h5, .h5, h6, .h6 {
 
     .table-responsive:has(> .pv-table) { overflow: visible; }
 }
+
+/* ---------- Form doğrulama mesajları ----------
+   Mesaj alanı için yer önceden ayrılır. Aksi halde kullanıcı bir alanı düzeltip doğrudan "Kaydet"e
+   bastığında hata yazısı kaybolur, buton yukarı kayar ve tıklama butonu ıskalardı (form gönderilmiyordu). */
+span[data-valmsg-for] {
+    display: block;
+    min-height: 1.3rem;
+    padding-top: 0.15rem;
+    font-size: 0.85rem;
+    line-height: 1.15rem;
+}
+
+.input-validation-error,
+.input-validation-error:focus {
+    border-color: #d64545;
+}
+
+.input-validation-error:focus {
+    box-shadow: 0 0 0 0.25rem rgba(214, 69, 69, 0.15);
+}
