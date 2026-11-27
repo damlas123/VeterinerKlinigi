@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using VeterinerKlinigi.API.Auth;
+using VeterinerKlinigi.Entities;
 using VeterinerKlinigi.Entities.Constants;
 
 namespace VeterinerKlinigi.API;
@@ -80,6 +81,28 @@ public static class DependencyInjection
                     ClockSkew = TimeSpan.FromMinutes(1),
                     NameClaimType = ClaimTypes.Name,
                     RoleClaimType = ClaimTypes.Role
+                };
+
+                // JWT kendi başına "durumsuz"dur: süresi dolana kadar geçerlidir. Admin bir hesabı kilitlediğinde
+                // veya hesap silindiğinde elde kalan token'ın da hemen işe yaramaz hale gelmesi için
+                // her istekte kullanıcının hâlâ var olduğu ve kilitli olmadığı kontrol edilir.
+                options.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = async context =>
+                    {
+                        var userId = context.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
+                        var userManager = context.HttpContext.RequestServices.GetRequiredService<UserManager<ApplicationUser>>();
+                        var user = userId is null ? null : await userManager.FindByIdAsync(userId);
+
+                        if (user is null)
+                        {
+                            context.Fail("Token sahibi kullanıcı bulunamadı.");
+                        }
+                        else if (await userManager.IsLockedOutAsync(user))
+                        {
+                            context.Fail("Hesap kilitli.");
+                        }
+                    }
                 };
             });
 
